@@ -150,25 +150,34 @@ input {
 }
 
 button {
-  border: 0;
+  border: 1px solid rgb(146 64 14 / 0.2);
   border-radius: 0.65rem;
   padding: 0.8rem;
   font-weight: 700;
   font: inherit;
-  color: #fff;
-  background: linear-gradient(120deg, var(--accent), var(--accent-strong));
+  color: #fff7ed;
+  background: linear-gradient(
+    120deg,
+    var(--accent, #d97706),
+    var(--accent-strong, #b45309)
+  );
+  box-shadow: 0 6px 18px rgb(217 119 6 / 0.28);
   cursor: pointer;
-  transition: transform 160ms ease, filter 160ms ease;
+  transition: transform 160ms ease, filter 160ms ease, box-shadow 160ms ease;
 }
 
 button:hover:not(:disabled) {
   transform: translateY(-1px);
-  filter: saturate(1.12);
+  filter: saturate(1.08) brightness(0.98);
+  box-shadow: 0 10px 22px rgb(180 83 9 / 0.32);
 }
 
 button:disabled {
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 1;
+  color: #fed7aa;
+  background: linear-gradient(120deg, #c2410c, #9a3412);
+  box-shadow: none;
 }
 
 .auth-form__error {

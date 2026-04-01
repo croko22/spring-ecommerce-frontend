@@ -1,5 +1,5 @@
 import { loginWithCredentials, registerWithCredentials } from '~/composables/useAuthApi'
-import { extractUserFromToken, type AuthUser } from '~/utils/authToken'
+import { extractAuthTokenBundle, extractUserFromToken, type AuthUser } from '~/utils/authToken'
 
 type LoginInput = {
   email: string
@@ -15,6 +15,7 @@ type RegisterInput = {
 type AuthStatus = 'idle' | 'loading' | 'authenticated' | 'guest'
 
 const TOKEN_KEY = 'auth.token'
+const REFRESH_TOKEN_KEY = 'auth.refresh-token'
 
 export function useAuthState() {
   const token = useCookie<string | null>('auth_token', {
@@ -26,6 +27,7 @@ export function useAuthState() {
   const status = useState<AuthStatus>('auth.status', () => 'idle')
   const user = useState<AuthUser | null>('auth.user', () => null)
   const error = useState<string>('auth.error', () => '')
+  const refreshToken = useState<string | null>('auth.refresh-token', () => null)
 
   const isAuthenticated = computed(() => Boolean(token.value && user.value))
 
@@ -64,6 +66,21 @@ export function useAuthState() {
     updateFromToken(jwt)
   }
 
+  function setRefreshToken(nextRefreshToken: string | null) {
+    refreshToken.value = nextRefreshToken
+
+    if (!import.meta.client) {
+      return
+    }
+
+    if (nextRefreshToken) {
+      localStorage.setItem(REFRESH_TOKEN_KEY, nextRefreshToken)
+      return
+    }
+
+    localStorage.removeItem(REFRESH_TOKEN_KEY)
+  }
+
   async function hydrate() {
     if (status.value === 'loading') {
       return
@@ -77,6 +94,14 @@ export function useAuthState() {
       if (localToken) {
         token.value = localToken
       }
+
+      if (!refreshToken.value) {
+        const localRefreshToken = localStorage.getItem(REFRESH_TOKEN_KEY)
+
+        if (localRefreshToken) {
+          refreshToken.value = localRefreshToken
+        }
+      }
     }
 
     updateFromToken(token.value ?? null)
@@ -85,12 +110,14 @@ export function useAuthState() {
   async function login(payload: LoginInput) {
     error.value = ''
     const result = await loginWithCredentials(payload)
+    const tokens = extractAuthTokenBundle(result)
 
-    if (!result?.token) {
+    if (!tokens.accessToken) {
       throw new Error('El backend no devolvio un token JWT valido.')
     }
 
-    setToken(result.token)
+    setToken(tokens.accessToken)
+    setRefreshToken(tokens.refreshToken)
     return result
   }
 
@@ -101,6 +128,7 @@ export function useAuthState() {
 
   function logout() {
     token.value = null
+    setRefreshToken(null)
     user.value = null
     status.value = 'guest'
 
@@ -112,6 +140,7 @@ export function useAuthState() {
 
   return {
     token,
+    refreshToken,
     user,
     status,
     error,

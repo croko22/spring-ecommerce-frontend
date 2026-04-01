@@ -23,7 +23,11 @@ type PasswordResetConfirmPayload = {
 
 type ApiMessageResponse = {
   message?: string
+  accessToken?: string
+  refreshToken?: string
+  expiresIn?: number
   token?: string
+  jwt?: string
 }
 
 export async function loginWithCredentials(payload: LoginPayload) {

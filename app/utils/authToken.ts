@@ -5,6 +5,12 @@ export type AuthUser = {
   roles: string[]
 }
 
+export type AuthTokenBundle = {
+  accessToken: string | null
+  refreshToken: string | null
+  expiresIn: number | null
+}
+
 type JwtPayload = {
   sub?: string
   email?: string
@@ -13,6 +19,44 @@ type JwtPayload = {
   roles?: string[]
   authorities?: string[]
   scope?: string
+}
+
+type MaybeRecord = Record<string, unknown>
+
+function pickString(payload: MaybeRecord, keys: string[]) {
+  for (const key of keys) {
+    const value = payload[key]
+
+    if (typeof value === 'string') {
+      const normalized = value.trim()
+
+      if (normalized) {
+        return normalized
+      }
+    }
+  }
+
+  return null
+}
+
+function pickNumber(payload: MaybeRecord, keys: string[]) {
+  for (const key of keys) {
+    const value = payload[key]
+
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return value
+    }
+
+    if (typeof value === 'string' && value.trim()) {
+      const parsed = Number(value)
+
+      if (Number.isFinite(parsed)) {
+        return parsed
+      }
+    }
+  }
+
+  return null
 }
 
 function decodeBase64Url(value: string) {
@@ -62,5 +106,15 @@ export function extractUserFromToken(token: string): AuthUser | null {
     email: payload.email ?? null,
     name: payload.name ?? payload.preferred_username ?? payload.email ?? null,
     roles: [...new Set([...rawRoles, ...scopedRoles].filter(Boolean))]
+  }
+}
+
+export function extractAuthTokenBundle(payload: unknown): AuthTokenBundle {
+  const data = (payload && typeof payload === 'object' ? payload : {}) as MaybeRecord
+
+  return {
+    accessToken: pickString(data, ['accessToken', 'access_token', 'token', 'jwt']),
+    refreshToken: pickString(data, ['refreshToken', 'refresh_token']),
+    expiresIn: pickNumber(data, ['expiresIn', 'expires_in'])
   }
 }
