@@ -1,9 +1,28 @@
+<script setup lang="ts">
+const auth = useAuthState()
+const displayName = computed(() => auth.user.value?.name ?? 'usuario')
+
+await auth.hydrate()
+
+function onLogout() {
+  auth.logout()
+}
+</script>
+
 <template>
   <div class="app-shell">
     <header class="app-shell__header">
-      <div class="app-shell__brand">Ecommerce Nuxt</div>
+      <NuxtLink class="app-shell__brand" to="/">Ecommerce Nuxt</NuxtLink>
       <nav class="app-shell__nav">
         <NuxtLink to="/">Inicio</NuxtLink>
+        <template v-if="auth.isAuthenticated">
+          <span class="app-shell__welcome">Hola, {{ displayName }}</span>
+          <button type="button" class="app-shell__logout" @click="onLogout">Salir</button>
+        </template>
+        <template v-else>
+          <NuxtLink to="/auth/login">Login</NuxtLink>
+          <NuxtLink to="/auth/register">Registro</NuxtLink>
+        </template>
       </nav>
     </header>
 
@@ -29,17 +48,50 @@
 }
 
 .app-shell__brand {
+  text-decoration: none;
+  color: var(--text-main);
   font-weight: 700;
   letter-spacing: 0.02em;
 }
 
+.app-shell__nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .app-shell__nav a {
-  color: #1f2937;
+  color: var(--text-main);
   text-decoration: none;
   font-weight: 500;
 }
 
+.router-link-active {
+  color: var(--accent);
+}
+
+.app-shell__welcome {
+  color: var(--text-muted);
+}
+
+.app-shell__logout {
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--border-soft);
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+}
+
 .app-shell__main {
   flex: 1;
+}
+
+@media (max-width: 640px) {
+  .app-shell__header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
 }
 </style>

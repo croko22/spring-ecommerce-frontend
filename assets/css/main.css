@@ -1,0 +1,41 @@
+:root {
+  --bg-page: radial-gradient(circle at top right, #ffd8a8 0%, #fff4e6 35%, #f8fafc 100%);
+  --bg-card: #ffffff;
+  --text-main: #102a43;
+  --text-muted: #486581;
+  --accent: #d97706;
+  --accent-strong: #b45309;
+  --accent-hover: #b45309;
+  --border-soft: #d9e2ec;
+  --danger: #c81e1e;
+  --success: #166534;
+  --font-sans: "Public Sans", "Manrope", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#__nuxt {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--text-main);
+  background: var(--bg-page);
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}

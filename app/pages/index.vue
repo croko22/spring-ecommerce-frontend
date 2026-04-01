@@ -10,6 +10,10 @@ const apiBase = useRuntimeConfig().public.apiBase
       Esta base conecta el frontend con el backend Spring Boot usando
       <code>{{ apiBase }}</code>.
     </p>
+    <div class="home__actions">
+      <NuxtLink class="home__button" to="/auth/login">Probar login</NuxtLink>
+      <NuxtLink class="home__button home__button--ghost" to="/auth/register">Crear cuenta</NuxtLink>
+    </div>
   </section>
 </template>
 
@@ -36,8 +40,34 @@ const apiBase = useRuntimeConfig().public.apiBase
 
 .home__description {
   margin-top: 1rem;
-  color: #475569;
+  color: var(--text-muted);
   line-height: 1.7;
+}
+
+.home__actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.home__button {
+  padding: 0.65rem 1rem;
+  border-radius: 0.6rem;
+  text-decoration: none;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+}
+
+.home__button:hover {
+  background: var(--accent-hover);
+}
+
+.home__button--ghost {
+  color: var(--text-main);
+  background: #fff;
+  border: 1px solid var(--border-soft);
 }
 
 code {
