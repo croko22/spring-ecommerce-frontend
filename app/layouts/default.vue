@@ -2,8 +2,6 @@
 const auth = useAuthState()
 const displayName = computed(() => auth.user.value?.name ?? 'usuario')
 
-await auth.hydrate()
-
 function onLogout() {
   auth.logout()
 }
