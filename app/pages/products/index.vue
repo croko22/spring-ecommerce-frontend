@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { ProductQueryState } from '~/types/product'
+import ProductCard from '~/components/products/ProductCard.vue'
+import ProductSkeletonCard from '~/components/products/ProductSkeletonCard.vue'
 
 const {
   queryState,
