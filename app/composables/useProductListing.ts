@@ -7,8 +7,11 @@ type ListingStatus = 'idle' | 'loading' | 'success' | 'error'
 export function useProductListing() {
   const route = useRoute()
   const router = useRouter()
+  const { settings } = useUserSettings()
 
-  const queryState = ref<ProductQueryState>(parseProductQuery(route.query as Record<string, unknown>))
+  const queryState = ref<ProductQueryState>(
+    parseProductQuery(route.query as Record<string, unknown>, settings.value.pageSize)
+  )
 
   const result = ref<ProductListResult | null>(null)
   const status = ref<ListingStatus>('idle')
@@ -71,7 +74,7 @@ export function useProductListing() {
   watch(
     () => route.query,
     async (nextQuery) => {
-      const normalized = parseProductQuery(nextQuery as Record<string, unknown>)
+      const normalized = parseProductQuery(nextQuery as Record<string, unknown>, settings.value.pageSize)
       const hasSameState = JSON.stringify(normalized) === JSON.stringify(queryState.value)
 
       if (!hasSameState) {

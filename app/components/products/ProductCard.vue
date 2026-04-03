@@ -1,25 +1,22 @@
 <script setup lang="ts">
 import type { Product } from '~/types/product'
+import { formatPenAmount } from '~/utils/currency'
 
 defineProps<{
   product: Product
 }>()
 
+const { settings } = useUserSettings()
+
 function productUrl(id: string) {
   return `/products/${encodeURIComponent(id)}`
 }
-const currencyFormatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 2
-})
-
-function formatPrice(amount: number, currency: string) {
-  if (currency === 'USD') {
-    return currencyFormatter.format(amount)
+function formatPrice(amount: number) {
+  if (settings.value.currency === 'PEN') {
+    return formatPenAmount(amount)
   }
 
-  return `${amount.toFixed(2)} ${currency}`
+  return `${amount.toFixed(2)} PEN`
 }
 </script>
 
@@ -42,7 +39,7 @@ function formatPrice(amount: number, currency: string) {
       </h2>
       <p class="product-card__description">{{ product.description }}</p>
       <div class="product-card__footer">
-        <strong class="product-card__price">{{ formatPrice(product.price, product.currency) }}</strong>
+        <strong class="product-card__price">{{ formatPrice(product.price) }}</strong>
         <NuxtLink :to="productUrl(product.id)" class="product-card__cta">Ver detalle</NuxtLink>
       </div>
     </div>

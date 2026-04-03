@@ -16,6 +16,7 @@ function onLogout() {
         <NuxtLink to="/">Inicio</NuxtLink>
         <NuxtLink to="/products">Productos</NuxtLink>
         <NuxtLink to="/cart">Carrito ({{ totalItems }})</NuxtLink>
+        <NuxtLink to="/settings">Configuracion</NuxtLink>
         <template v-if="auth.isAuthenticated">
           <span class="app-shell__welcome">Hola, {{ displayName }}</span>
           <button type="button" class="app-shell__logout" @click="onLogout">Salir</button>

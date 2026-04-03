@@ -31,7 +31,7 @@ function normalizeCartItem(entry: unknown): CartItem | null {
   const productId = String(item.productId ?? '').trim()
   const name = String(item.name ?? '').trim()
   const imageUrl = String(item.imageUrl ?? '').trim()
-  const currency = String(item.currency ?? 'USD').trim() || 'USD'
+  const currency = 'PEN'
   const price = Number(item.price)
   const quantity = Number(item.quantity)
 
@@ -68,7 +68,7 @@ export function addCartItem(items: CartItem[], product: CartProduct, quantity = 
         productId: product.id,
         name: product.name,
         price: product.price,
-        currency: product.currency,
+        currency: 'PEN',
         imageUrl: product.imageUrl,
         quantity: safeQuantity
       }

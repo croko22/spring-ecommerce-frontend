@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getProductById } from '~/services/productService'
+import { formatPenAmount } from '~/utils/currency'
 import { clampQuantity, resolveAvailabilityState } from '~/utils/productDetail'
 
 const route = useRoute()
@@ -64,22 +65,12 @@ const quantity = ref(1)
 const addFeedback = ref('')
 const selectedImage = ref('')
 
-const money = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 2
-})
-
 const formattedPrice = computed(() => {
   if (!product.value) {
     return ''
   }
 
-  if (product.value.currency === 'USD') {
-    return money.format(product.value.price)
-  }
-
-  return `${product.value.price.toFixed(2)} ${product.value.currency}`
+  return formatPenAmount(product.value.price)
 })
 
 const galleryImages = computed(() => {

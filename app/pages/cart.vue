@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatPenAmount } from '~/utils/currency'
+
 const {
   items,
   subtotal,
@@ -10,22 +12,12 @@ const {
   clearCart
 } = useCart()
 
-const money = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 2
-})
-
 const shippingCost = computed(() => 0)
 const taxes = computed(() => 0)
 const orderTotal = computed(() => subtotal.value + shippingCost.value + taxes.value)
 
-function formatAmount(amount: number, currency = 'USD') {
-  if (currency === 'USD') {
-    return money.format(amount)
-  }
-
-  return `${amount.toFixed(2)} ${currency}`
+function formatAmount(amount: number) {
+  return formatPenAmount(amount)
 }
 
 function itemSubtotal(price: number, quantity: number) {
@@ -73,7 +65,7 @@ useSeoMeta({
             <NuxtLink class="cart-item__name" :to="`/products/${encodeURIComponent(item.productId)}`">
               {{ item.name }}
             </NuxtLink>
-            <p class="cart-item__price">{{ formatAmount(item.price, item.currency) }} c/u</p>
+            <p class="cart-item__price">{{ formatAmount(item.price) }} c/u</p>
 
             <div class="cart-item__actions">
               <div class="cart-item__qty" aria-label="Control de cantidad">

@@ -7,12 +7,15 @@ function parsePositiveInt(value: unknown, fallback: number): number {
   return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : fallback
 }
 
-export function parseProductQuery(query: Record<string, unknown>): ProductQueryState {
+export function parseProductQuery(
+  query: Record<string, unknown>,
+  defaultPageSize: number = PRODUCT_DEFAULT_PAGE_SIZE
+): ProductQueryState {
   return {
     search: String(query.q ?? '').trim(),
     category: String(query.category ?? '').trim(),
     page: parsePositiveInt(query.page, 1),
-    size: parsePositiveInt(query.size, PRODUCT_DEFAULT_PAGE_SIZE)
+    size: parsePositiveInt(query.size, defaultPageSize)
   }
 }
 
