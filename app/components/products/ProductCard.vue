@@ -5,6 +5,9 @@ defineProps<{
   product: Product
 }>()
 
+function productUrl(id: string) {
+  return `/products/${encodeURIComponent(id)}`
+}
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
@@ -22,7 +25,7 @@ function formatPrice(amount: number, currency: string) {
 
 <template>
   <article class="product-card">
-    <NuxtLink :to="`/products/${product.id}`" class="product-card__media-link">
+    <NuxtLink :to="productUrl(product.id)" class="product-card__media-link">
       <img
         class="product-card__image"
         :src="product.imageUrl"
@@ -35,12 +38,12 @@ function formatPrice(amount: number, currency: string) {
     <div class="product-card__body">
       <p class="product-card__category">{{ product.category }}</p>
       <h2 class="product-card__name">
-        <NuxtLink :to="`/products/${product.id}`">{{ product.name }}</NuxtLink>
+        <NuxtLink :to="productUrl(product.id)">{{ product.name }}</NuxtLink>
       </h2>
       <p class="product-card__description">{{ product.description }}</p>
       <div class="product-card__footer">
         <strong class="product-card__price">{{ formatPrice(product.price, product.currency) }}</strong>
-        <NuxtLink :to="`/products/${product.id}`" class="product-card__cta">Ver detalle</NuxtLink>
+        <NuxtLink :to="productUrl(product.id)" class="product-card__cta">Ver detalle</NuxtLink>
       </div>
     </div>
   </article>

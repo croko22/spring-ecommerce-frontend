@@ -6,6 +6,9 @@ export type Product = {
   currency: string
   imageUrl: string
   category: string
+  inStock?: boolean
+  stock?: number | null
+  gallery?: string[]
 }
 
 export type ProductQueryState = {

@@ -213,6 +213,24 @@ function normalizeProductEntry(entry: unknown): Product | null {
       ?? product.image
       ?? 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80'
   )
+  const stockRaw = Number(product.stock ?? product.inventory ?? product.quantity ?? Number.NaN)
+  const hasStockValue = Number.isFinite(stockRaw)
+  const stock = hasStockValue ? Math.max(0, Math.floor(stockRaw)) : null
+  const inStockRaw = product.inStock ?? product.available
+  const inStock = typeof inStockRaw === 'boolean'
+    ? inStockRaw
+    : hasStockValue
+      ? stockRaw > 0
+      : true
+  const galleryRaw = Array.isArray(product.gallery)
+    ? product.gallery
+    : Array.isArray(product.images)
+      ? product.images
+      : []
+  const gallery = galleryRaw
+    .map(item => String(item).trim())
+    .filter(Boolean)
+  const safeGallery = gallery.length ? gallery : [imageUrl]
 
   return {
     id,
@@ -221,7 +239,10 @@ function normalizeProductEntry(entry: unknown): Product | null {
     price: Number.isFinite(price) ? price : 0,
     currency: String(product.currency ?? 'USD'),
     imageUrl,
-    category
+    category,
+    inStock,
+    stock,
+    gallery: safeGallery
   }
 }
 
