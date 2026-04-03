@@ -11,7 +11,8 @@ const apiBase = useRuntimeConfig().public.apiBase
       <code>{{ apiBase }}</code>.
     </p>
     <div class="home__actions">
-      <NuxtLink class="home__button" to="/auth/login">Probar login</NuxtLink>
+      <NuxtLink class="home__button" to="/products">Ver catalogo</NuxtLink>
+      <NuxtLink class="home__button home__button--ghost" to="/auth/login">Probar login</NuxtLink>
       <NuxtLink class="home__button home__button--ghost" to="/auth/register">Crear cuenta</NuxtLink>
     </div>
   </section>

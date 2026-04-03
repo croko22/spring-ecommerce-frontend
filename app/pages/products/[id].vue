@@ -158,7 +158,6 @@ useSeoMeta({
   },
   description: () => product.value?.description ?? 'Detalle del producto en catalogo'
 })
-
 </script>
 
 <template>
@@ -278,7 +277,6 @@ useSeoMeta({
   color: inherit;
   font-weight: 600;
 }
-
 .product-detail__state--error {
   border-color: #fecaca;
   color: #991b1b;
@@ -311,7 +309,6 @@ useSeoMeta({
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
 }
-
 .product-detail__image {
   width: 100%;
   height: 100%;
@@ -349,7 +346,6 @@ useSeoMeta({
   opacity: 1;
   border-color: #f59e0b;
 }
-
 .product-detail__body {
   padding: 1.2rem;
 }
@@ -439,7 +435,6 @@ h1 {
   color: #166534;
   font-weight: 600;
 }
-
 @media (max-width: 780px) {
   .product-detail__card {
     grid-template-columns: 1fr;

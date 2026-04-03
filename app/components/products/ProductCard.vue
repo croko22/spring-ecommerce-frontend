@@ -8,7 +8,6 @@ defineProps<{
 function productUrl(id: string) {
   return `/products/${encodeURIComponent(id)}`
 }
-
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',

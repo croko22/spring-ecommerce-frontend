@@ -2,8 +2,6 @@
 const auth = useAuthState()
 const displayName = computed(() => auth.user.value?.name ?? 'usuario')
 
-await auth.hydrate()
-
 function onLogout() {
   auth.logout()
 }
@@ -15,6 +13,7 @@ function onLogout() {
       <NuxtLink class="app-shell__brand" to="/">Ecommerce Nuxt</NuxtLink>
       <nav class="app-shell__nav">
         <NuxtLink to="/">Inicio</NuxtLink>
+        <NuxtLink to="/products">Productos</NuxtLink>
         <template v-if="auth.isAuthenticated">
           <span class="app-shell__welcome">Hola, {{ displayName }}</span>
           <button type="button" class="app-shell__logout" @click="onLogout">Salir</button>
