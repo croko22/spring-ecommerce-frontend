@@ -3,6 +3,7 @@ import { getProductById } from '~/services/productService'
 import { clampQuantity, resolveAvailabilityState } from '~/utils/productDetail'
 
 const route = useRoute()
+const cart = useCart()
 
 type DetailStatus = 'idle' | 'loading' | 'success' | 'empty' | 'error'
 
@@ -138,12 +139,13 @@ function updateQuantity(event: Event) {
   addFeedback.value = ''
 }
 
-function addToCartPlaceholder() {
+function addToCart() {
   if (!product.value) {
     return
   }
 
-  addFeedback.value = `${quantity.value} x ${product.value.name} agregado (placeholder)`
+  cart.addItem(product.value, quantity.value)
+  addFeedback.value = `${quantity.value} x ${product.value.name} agregado al carrito`
 }
 
 async function retry() {
@@ -230,12 +232,12 @@ useSeoMeta({
             </select>
           </label>
 
-          <button
-            type="button"
-            class="product-detail__add"
-            :disabled="!availability.inStock"
-            @click="addToCartPlaceholder"
-          >
+            <button
+              type="button"
+              class="product-detail__add"
+              :disabled="!availability.inStock"
+              @click="addToCart"
+            >
             {{ availability.inStock ? 'Agregar al carrito' : 'No disponible' }}
           </button>
         </div>
