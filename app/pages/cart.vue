@@ -109,9 +109,14 @@ useSeoMeta({
           </div>
         </dl>
 
-        <button type="button" class="cart-summary__checkout" disabled>
-          Continuar compra (proximamente)
-        </button>
+        <NuxtLink
+          type="button"
+          class="cart-summary__checkout"
+          :class="{ 'cart-summary__checkout--disabled': isEmpty }"
+          :to="isEmpty ? undefined : '/checkout'"
+        >
+          {{ isEmpty ? 'Agrega productos al carrito' : 'Continuar compra' }}
+        </NuxtLink>
       </aside>
     </div>
   </section>
@@ -344,9 +349,11 @@ h2 {
   font-weight: 700;
 }
 
-.cart-summary__checkout:disabled {
+.cart-summary__checkout:disabled,
+.cart-summary__checkout--disabled {
   opacity: 0.7;
   cursor: not-allowed;
+  pointer-events: none;
 }
 
 @media (max-width: 860px) {
