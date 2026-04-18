@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { ShoppingCart } from 'lucide-vue-next'
+
 const auth = useAuthState()
 const { totalItems } = useCart()
 const displayName = computed(() => auth.user.value?.name ?? 'usuario')
+const cartOpen = ref(false)
 
 function onLogout() {
   auth.logout()
@@ -15,7 +18,15 @@ function onLogout() {
       <nav class="app-shell__nav">
         <NuxtLink to="/">Inicio</NuxtLink>
         <NuxtLink to="/products">Productos</NuxtLink>
-        <NuxtLink to="/cart">Carrito ({{ totalItems }})</NuxtLink>
+        <button
+          type="button"
+          class="app-shell__cart-btn"
+          aria-label="Abrir carrito"
+          @click="cartOpen = true"
+        >
+          <ShoppingCart class="w-5 h-5" />
+          <Badge v-if="totalItems > 0" variant="destructive" class="ml-1">{{ totalItems }}</Badge>
+        </button>
         <NuxtLink to="/settings">Configuracion</NuxtLink>
         <template v-if="auth.isAuthenticated">
           <span class="app-shell__welcome">Hola, {{ displayName }}</span>
@@ -31,6 +42,8 @@ function onLogout() {
     <main class="app-shell__main">
       <slot />
     </main>
+
+    <CartDrawer v-model:open="cartOpen" />
   </div>
 </template>
 
@@ -70,6 +83,16 @@ function onLogout() {
 
 .router-link-active {
   color: var(--accent);
+}
+
+.app-shell__cart-btn {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-main);
+  position: relative;
 }
 
 .app-shell__welcome {

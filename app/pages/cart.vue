@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatPenAmount } from '~/utils/currency'
+import { toast } from 'vue-sonner'
 
 const {
   items,
@@ -22,6 +23,11 @@ function formatAmount(amount: number) {
 
 function itemSubtotal(price: number, quantity: number) {
   return formatAmount(price * quantity)
+}
+
+function handleClearCart() {
+  clearCart()
+  toast('Cart cleared')
 }
 
 useSeoMeta({
