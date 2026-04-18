@@ -2,6 +2,7 @@
 import { getProductById } from '~/services/productService'
 import { formatPenAmount } from '~/utils/currency'
 import { clampQuantity, resolveAvailabilityState } from '~/utils/productDetail'
+import { toast } from 'vue-sonner'
 
 const route = useRoute()
 const cart = useCart()
@@ -137,6 +138,7 @@ function addToCart() {
 
   cart.addItem(product.value, quantity.value)
   addFeedback.value = `${quantity.value} x ${product.value.name} agregado al carrito`
+  toast.success(`${product.value.name} added to cart`)
 }
 
 async function retry() {
