@@ -274,8 +274,8 @@ useSeoMeta({
 }
 .product-detail__state--error {
   border-color: #fecaca;
-  color: #991b1b;
-  background: #fff1f2;
+  color: #dc2626;
+  background: #fef2f2;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -365,7 +365,7 @@ h1 {
 
 .product-detail__price {
   margin-top: 1rem;
-  color: #7c2d12;
+  color: #c2410c;
   font-size: 1.3rem;
   font-weight: 800;
 }
@@ -376,15 +376,15 @@ h1 {
 }
 
 .product-detail__availability--in {
-  color: #166534;
+  color: #15803d;
 }
 
 .product-detail__availability--low {
-  color: #9a3412;
+  color: #c2410c;
 }
 
 .product-detail__availability--out {
-  color: #991b1b;
+  color: #dc2626;
 }
 
 .product-detail__actions {
@@ -411,12 +411,18 @@ h1 {
 }
 
 .product-detail__add {
-  border: 1px solid rgb(180 83 9 / 0.24);
+  border: none;
   border-radius: 0.65rem;
   padding: 0.7rem 1rem;
-  background: linear-gradient(125deg, var(--accent), var(--accent-strong));
+  background: #c2410c;
   color: #fff;
   font-weight: 700;
+  transition: background-color 0.15s;
+}
+
+.product-detail__add:hover {
+  background: #9a3412;
+}
   cursor: pointer;
 }
 

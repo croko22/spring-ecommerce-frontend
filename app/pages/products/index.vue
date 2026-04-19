@@ -218,7 +218,7 @@ h1 {
 
 .products-page__total {
   margin: 0;
-  color: #7c2d12;
+  color: #c2410c;
   font-weight: 700;
 }
 
@@ -251,13 +251,18 @@ h1 {
 }
 
 .products-toolbar button {
-  border: 1px solid rgb(180 83 9 / 0.24);
+  border: none;
   border-radius: 0.65rem;
   padding: 0.72rem 1rem;
-  background: linear-gradient(125deg, var(--accent), var(--accent-strong));
+  background: #c2410c;
   color: #fff;
   font-weight: 700;
   cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.products-toolbar button:hover {
+  background: #9a3412;
 }
 
 .products-toolbar button:disabled {
@@ -285,8 +290,8 @@ h1 {
 
 .products-state--error {
   border-color: #fecaca;
-  color: #991b1b;
-  background: #fff1f2;
+  color: #dc2626;
+  background: #fef2f2;
 }
 
 .products-state--error button {

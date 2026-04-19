@@ -488,8 +488,13 @@ useSeoMeta({
   border-radius: 0.65rem;
   text-decoration: none;
   color: #fff;
-  background: linear-gradient(125deg, var(--accent), var(--accent-strong));
+  background: #c2410c;
   font-weight: 700;
+  transition: background-color 0.15s;
+}
+
+.checkout-empty__cta:hover {
+  background: #9a3412;
 }
 
 /* Layout */
@@ -537,15 +542,15 @@ useSeoMeta({
 }
 
 .steps__item--active .steps__button {
-  border-color: var(--accent);
-  background: linear-gradient(125deg, var(--accent), var(--accent-strong));
+  border-color: #c2410c;
+  background: #c2410c;
   color: #fff;
 }
 
 .steps__item--completed .steps__button {
-  background: #e8f5e9;
-  border-color: #4caf50;
-  color: #2e7d32;
+  background: #dcfce7;
+  border-color: #22c55e;
+  color: #15803d;
 }
 
 .steps__icon {
@@ -640,17 +645,17 @@ useSeoMeta({
 .btn-primary {
   margin-top: 0.5rem;
   padding: 0.75rem 1rem;
-  border: 1px solid rgb(180 83 9 / 0.24);
+  border: none;
   border-radius: 0.65rem;
-  background: linear-gradient(125deg, var(--accent), var(--accent-strong));
+  background: #c2410c;
   color: #fff;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: background-color 0.15s;
 }
 
 .btn-primary:hover {
-  opacity: 0.95;
+  background: #9a3412;
 }
 
 .btn-primary:disabled {
@@ -776,7 +781,7 @@ useSeoMeta({
 .review-totals__row--total {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #7c2d12;
+  color: #0f172a;
   padding-top: 0.75rem;
   margin-top: 0.5rem;
   border-top: 1px solid var(--border-soft);
