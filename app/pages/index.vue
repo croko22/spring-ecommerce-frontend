@@ -29,7 +29,7 @@ const apiBase = useRuntimeConfig().public.apiBase
   font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #334155;
+  color: #475569;
   margin-bottom: 0.5rem;
 }
 

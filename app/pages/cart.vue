@@ -288,7 +288,8 @@ h1 {
 .cart-item__remove {
   border: 0;
   background: transparent;
-  color: #991b1b;
+  color: #dc2626;
+  font-weight: 600;
   text-decoration: underline;
   cursor: pointer;
 }
@@ -296,7 +297,7 @@ h1 {
 .cart-item__subtotal {
   margin: 0;
   font-weight: 800;
-  color: #7c2d12;
+  color: #c2410c;
 }
 
 .cart-summary {
@@ -341,18 +342,24 @@ h2 {
 
 .cart-summary__total dd {
   font-size: 1.08rem;
-  color: #7c2d12;
+  color: #0f172a;
 }
 
 .cart-summary__checkout {
   width: 100%;
   margin-top: 0.9rem;
-  border: 1px solid rgb(180 83 9 / 0.24);
+  border: none;
   border-radius: 0.65rem;
   padding: 0.75rem 0.85rem;
-  background: linear-gradient(125deg, var(--accent), var(--accent-strong));
+  background: #c2410c;
   color: #fff;
   font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.cart-summary__checkout:hover {
+  background: #9a3412;
 }
 
 .cart-summary__checkout:disabled,
