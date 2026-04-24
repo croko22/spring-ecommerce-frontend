@@ -16,11 +16,17 @@ const {
   fetchListing,
   setSearch,
   setCategory,
+  setSort,
+  setPriceRange,
+  setInStock,
+  clearFilters,
   goToPage,
   refresh
 } = useProductListing()
 
 const searchInput = ref(queryState.value.search)
+const priceMinInput = ref(queryState.value.priceMin ?? '')
+const priceMaxInput = ref(queryState.value.priceMax ?? '')
 
 const totalLabel = computed(() => {
   const total = result.value?.totalItems ?? 0
@@ -33,6 +39,17 @@ const totalLabel = computed(() => {
   }
 
   return `${total} productos encontrados`
+})
+
+const hasActiveFilters = computed(() => {
+  return Boolean(
+    queryState.value.search ||
+    queryState.value.category ||
+    queryState.value.sort !== 'name' ||
+    queryState.value.priceMin !== null ||
+    queryState.value.priceMax !== null ||
+    queryState.value.inStock !== null
+  )
 })
 
 const pageNumbers = computed(() => {
@@ -49,8 +66,10 @@ const pageNumbers = computed(() => {
   return visible
 })
 
-function updateSearchFromState(state: ProductQueryState) {
+function updateInputsFromState(state: ProductQueryState) {
   searchInput.value = state.search
+  priceMinInput.value = state.priceMin ?? ''
+  priceMaxInput.value = state.priceMax ?? ''
 }
 
 async function submitSearch() {
@@ -60,6 +79,27 @@ async function submitSearch() {
 async function onCategoryChange(event: Event) {
   const target = event.target as HTMLSelectElement
   await setCategory(target.value)
+}
+
+async function onSortChange(event: Event) {
+  const target = event.target as HTMLSelectElement
+  await setSort(target.value as ProductQueryState['sort'])
+}
+
+async function onInStockChange(event: Event) {
+  const target = event.target as HTMLSelectElement
+  const value = target.value
+  await setInStock(value === '' ? null : value === 'true')
+}
+
+async function submitPriceRange() {
+  const min = priceMinInput.value === '' ? null : Number(priceMinInput.value)
+  const max = priceMaxInput.value === '' ? null : Number(priceMaxInput.value)
+  await setPriceRange(min, max)
+}
+
+async function onClearFilters() {
+  await clearFilters()
 }
 
 async function prevPage() {
@@ -73,7 +113,7 @@ async function nextPage() {
 watch(
   () => queryState.value,
   (nextState) => {
-    updateSearchFromState(nextState)
+    updateInputsFromState(nextState)
   },
   { deep: true }
 )
@@ -103,6 +143,7 @@ await fetchListing()
             v-model="searchInput"
             type="search"
             placeholder="Ej: jacket, shoes, headphones"
+            :disabled="isLoading"
           >
           <button type="submit" :disabled="isLoading">Aplicar</button>
         </div>
@@ -122,6 +163,66 @@ await fetchListing()
           </option>
         </select>
       </label>
+
+      <label class="products-toolbar__filter" for="product-sort">
+        <span class="products-toolbar__label">Ordenar por</span>
+        <select
+          id="product-sort"
+          :value="queryState.sort"
+          :disabled="isLoading"
+          @change="onSortChange"
+        >
+          <option value="name">Nombre</option>
+          <option value="price-asc">Precio: menor a mayor</option>
+          <option value="price-desc">Precio: mayor a menor</option>
+          <option value="rating">Mejor valorados</option>
+        </select>
+      </label>
+
+      <div class="products-toolbar__filter">
+        <span class="products-toolbar__label">Rango de precio</span>
+        <div class="products-toolbar__price-row">
+          <input
+            v-model="priceMinInput"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="Min"
+            :disabled="isLoading"
+          >
+          <input
+            v-model="priceMaxInput"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="Max"
+            :disabled="isLoading"
+          >
+          <button type="button" :disabled="isLoading" @click="submitPriceRange">
+            Aplicar
+          </button>
+        </div>
+      </div>
+
+      <label class="products-toolbar__filter" for="product-availability">
+        <span class="products-toolbar__label">Disponibilidad</span>
+        <select
+          id="product-availability"
+          :value="queryState.inStock === null ? '' : String(queryState.inStock)"
+          :disabled="isLoading"
+          @change="onInStockChange"
+        >
+          <option value="">Todas</option>
+          <option value="true">En stock</option>
+          <option value="false">Agotado</option>
+        </select>
+      </label>
+
+      <div v-if="hasActiveFilters" class="products-toolbar__actions">
+        <button type="button" class="products-toolbar__clear" :disabled="isLoading" @click="onClearFilters">
+          Limpiar filtros
+        </button>
+      </div>
     </div>
 
     <p v-if="status === 'error'" class="products-state products-state--error">
@@ -137,7 +238,7 @@ await fetchListing()
       v-else-if="!hasResults"
       class="products-state products-state--empty"
     >
-      No encontramos productos para esa busqueda. Intenta con otro termino o categoria.
+      No encontramos productos para esa busqueda. Intenta con otro termino o ajusta los filtros.
     </p>
 
     <div v-else class="products-grid">
@@ -225,8 +326,18 @@ h1 {
 .products-toolbar {
   margin-top: 1.4rem;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 0.85rem;
+  align-items: end;
+}
+
+.products-toolbar__search {
+  grid-column: span 2;
+}
+
+.products-toolbar__filter {
+  display: flex;
+  flex-direction: column;
 }
 
 .products-toolbar__label {
@@ -237,6 +348,11 @@ h1 {
 }
 
 .products-toolbar__search-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.products-toolbar__price-row {
   display: flex;
   gap: 0.5rem;
 }
@@ -259,6 +375,7 @@ h1 {
   font-weight: 700;
   cursor: pointer;
   transition: background-color 0.15s;
+  white-space: nowrap;
 }
 
 .products-toolbar button:hover {
@@ -268,6 +385,21 @@ h1 {
 .products-toolbar button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+.products-toolbar__actions {
+  display: flex;
+  align-items: flex-end;
+}
+
+.products-toolbar__clear {
+  background: #fff;
+  color: #c2410c;
+  border: 1px solid #c2410c;
+}
+
+.products-toolbar__clear:hover {
+  background: #fff8eb;
 }
 
 .products-grid {
@@ -338,6 +470,16 @@ h1 {
   background: #fff8eb;
 }
 
+@media (max-width: 1100px) {
+  .products-toolbar {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .products-toolbar__search {
+    grid-column: span 2;
+  }
+}
+
 @media (max-width: 960px) {
   .products-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -346,7 +488,11 @@ h1 {
 
 @media (max-width: 760px) {
   .products-toolbar {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .products-toolbar__search {
+    grid-column: span 2;
   }
 
   .products-grid {
@@ -357,6 +503,14 @@ h1 {
 @media (max-width: 520px) {
   .products-page {
     padding-inline: 0.85rem;
+  }
+
+  .products-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .products-toolbar__search {
+    grid-column: span 1;
   }
 
   .products-grid {
