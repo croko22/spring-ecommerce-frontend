@@ -238,6 +238,11 @@ useSeoMeta({
         <p v-if="addFeedback" class="product-detail__feedback">{{ addFeedback }}</p>
       </div>
     </article>
+
+    <div v-if="isSuccess && product" class="product-detail__reviews">
+      <ReviewList :product-id="product.id" />
+      <ReviewForm :product-id="product.id" />
+    </div>
   </section>
 </template>
 
@@ -435,6 +440,10 @@ h1 {
   margin-top: 0.8rem;
   color: #166534;
   font-weight: 600;
+}
+
+.product-detail__reviews {
+  margin-top: 2rem;
 }
 @media (max-width: 780px) {
   .product-detail__card {
