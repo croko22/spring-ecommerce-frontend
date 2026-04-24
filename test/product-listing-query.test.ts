@@ -12,14 +12,22 @@ describe('product listing query helpers', () => {
       search: '',
       category: '',
       page: 1,
-      size: PRODUCT_DEFAULT_PAGE_SIZE
+      size: PRODUCT_DEFAULT_PAGE_SIZE,
+      sort: 'name',
+      priceMin: null,
+      priceMax: null,
+      inStock: null
     })
 
-    expect(parseProductQuery({ q: '  shoes ', category: 'Footwear', page: '3', size: '24' })).toEqual({
+    expect(parseProductQuery({ q: '  shoes ', category: 'Footwear', page: '3', size: '24', sort: 'price-desc', priceMin: '10', priceMax: '100', inStock: 'true' })).toEqual({
       search: 'shoes',
       category: 'Footwear',
       page: 3,
-      size: 24
+      size: 24,
+      sort: 'price-desc',
+      priceMin: 10,
+      priceMax: 100,
+      inStock: true
     })
   })
 
@@ -28,19 +36,31 @@ describe('product listing query helpers', () => {
       search: '',
       category: '',
       page: 1,
-      size: PRODUCT_DEFAULT_PAGE_SIZE
+      size: PRODUCT_DEFAULT_PAGE_SIZE,
+      sort: 'name',
+      priceMin: null,
+      priceMax: null,
+      inStock: null
     })).toEqual({})
 
     expect(stringifyProductQuery({
       search: 'jacket',
       category: 'Apparel',
       page: 2,
-      size: 24
+      size: 24,
+      sort: 'rating',
+      priceMin: 10,
+      priceMax: 200,
+      inStock: true
     })).toEqual({
       q: 'jacket',
       category: 'Apparel',
       page: '2',
-      size: '24'
+      size: '24',
+      sort: 'rating',
+      priceMin: '10',
+      priceMax: '200',
+      inStock: 'true'
     })
   })
 })

@@ -1,3 +1,5 @@
+export type ProductSort = 'name' | 'price-asc' | 'price-desc' | 'rating'
+
 export type Product = {
   id: string
   name: string
@@ -9,6 +11,7 @@ export type Product = {
   inStock?: boolean
   stock?: number | null
   gallery?: string[]
+  rating?: number | null
 }
 
 export type ProductQueryState = {
@@ -16,6 +19,10 @@ export type ProductQueryState = {
   category: string
   page: number
   size: number
+  sort: ProductSort
+  priceMin: number | null
+  priceMax: number | null
+  inStock: boolean | null
 }
 
 export type ProductListResult = {

@@ -10,7 +10,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 89.9,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80',
-    category: 'Footwear'
+    category: 'Footwear',
+    stock: 12,
+    rating: 4.5
   },
   {
     id: 'p-002',
@@ -19,7 +21,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 119.5,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80',
-    category: 'Apparel'
+    category: 'Apparel',
+    stock: 8,
+    rating: 4.2
   },
   {
     id: 'p-003',
@@ -28,7 +32,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 74,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80',
-    category: 'Accessories'
+    category: 'Accessories',
+    stock: 0,
+    rating: 3.9
   },
   {
     id: 'p-004',
@@ -37,7 +43,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 159,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=900&q=80',
-    category: 'Electronics'
+    category: 'Electronics',
+    stock: 25,
+    rating: 4.7
   },
   {
     id: 'p-005',
@@ -46,7 +54,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 199,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=900&q=80',
-    category: 'Electronics'
+    category: 'Electronics',
+    stock: 5,
+    rating: 4.1
   },
   {
     id: 'p-006',
@@ -55,7 +65,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 34,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=900&q=80',
-    category: 'Home'
+    category: 'Home',
+    stock: 50,
+    rating: 4.3
   },
   {
     id: 'p-007',
@@ -64,7 +76,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 62,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1593618998160-5fbf4f45863b?auto=format&fit=crop&w=900&q=80',
-    category: 'Home'
+    category: 'Home',
+    stock: 3,
+    rating: 4.8
   },
   {
     id: 'p-008',
@@ -73,7 +87,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 45.5,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=900&q=80',
-    category: 'Home'
+    category: 'Home',
+    stock: 15,
+    rating: 4.0
   },
   {
     id: 'p-009',
@@ -82,7 +98,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 58,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80',
-    category: 'Apparel'
+    category: 'Apparel',
+    stock: 7,
+    rating: 3.7
   },
   {
     id: 'p-010',
@@ -91,7 +109,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 77,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=80',
-    category: 'Accessories'
+    category: 'Accessories',
+    stock: 20,
+    rating: 4.4
   },
   {
     id: 'p-011',
@@ -100,7 +120,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 68,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1519583272095-6433daf26b6e?auto=format&fit=crop&w=900&q=80',
-    category: 'Sports'
+    category: 'Sports',
+    stock: 4,
+    rating: 4.6
   },
   {
     id: 'p-012',
@@ -109,7 +131,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 39,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=900&q=80',
-    category: 'Sports'
+    category: 'Sports',
+    stock: 0,
+    rating: 3.5
   },
   {
     id: 'p-013',
@@ -118,7 +142,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 52,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=80',
-    category: 'Home'
+    category: 'Home',
+    stock: 9,
+    rating: 4.2
   },
   {
     id: 'p-014',
@@ -127,7 +153,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 24,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80',
-    category: 'Electronics'
+    category: 'Electronics',
+    stock: 100,
+    rating: 3.9
   },
   {
     id: 'p-015',
@@ -136,7 +164,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 64,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=900&q=80',
-    category: 'Apparel'
+    category: 'Apparel',
+    stock: 2,
+    rating: 4.1
   },
   {
     id: 'p-016',
@@ -145,7 +175,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 98,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=900&q=80',
-    category: 'Accessories'
+    category: 'Accessories',
+    stock: 6,
+    rating: 4.5
   },
   {
     id: 'p-017',
@@ -154,7 +186,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 55,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=900&q=80',
-    category: 'Apparel'
+    category: 'Apparel',
+    stock: 11,
+    rating: 3.8
   },
   {
     id: 'p-018',
@@ -163,7 +197,9 @@ const MOCK_PRODUCTS: Product[] = [
     price: 41,
     currency: 'USD',
     imageUrl: 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=900&q=80',
-    category: 'Accessories'
+    category: 'Accessories',
+    stock: 30,
+    rating: 4.3
   }
 ]
 
@@ -183,7 +219,11 @@ function normalizeQuery(query: Partial<ProductQueryState>): ProductQueryState {
     search: String(query.search ?? '').trim(),
     category: String(query.category ?? '').trim(),
     page: Number.isFinite(query.page) && Number(query.page) > 0 ? Number(query.page) : 1,
-    size: Number.isFinite(query.size) && Number(query.size) > 0 ? Number(query.size) : FALLBACK_PAGE_SIZE
+    size: Number.isFinite(query.size) && Number(query.size) > 0 ? Number(query.size) : FALLBACK_PAGE_SIZE,
+    sort: query.sort ?? 'name',
+    priceMin: query.priceMin ?? null,
+    priceMax: query.priceMax ?? null,
+    inStock: query.inStock ?? null
   }
 }
 
@@ -232,6 +272,9 @@ function normalizeProductEntry(entry: unknown): Product | null {
     .filter(Boolean)
   const safeGallery = gallery.length ? gallery : [imageUrl]
 
+  const ratingRaw = Number(product.rating ?? product.averageRating ?? product.score ?? Number.NaN)
+  const rating = Number.isFinite(ratingRaw) ? Math.max(0, Math.min(5, ratingRaw)) : null
+
   return {
     id,
     name,
@@ -242,7 +285,8 @@ function normalizeProductEntry(entry: unknown): Product | null {
     category,
     inStock,
     stock,
-    gallery: safeGallery
+    gallery: safeGallery,
+    rating
   }
 }
 
@@ -254,19 +298,45 @@ function filterMockProducts(products: Product[], query: ProductQueryState): Prod
       || product.name.toLowerCase().includes(term)
       || product.description.toLowerCase().includes(term)
     const matchCategory = !query.category || product.category === query.category
+    const matchPriceMin = query.priceMin === null || product.price >= query.priceMin
+    const matchPriceMax = query.priceMax === null || product.price <= query.priceMax
+    const matchInStock = query.inStock === null || product.inStock === query.inStock
 
-    return matchSearch && matchCategory
+    return matchSearch && matchCategory && matchPriceMin && matchPriceMax && matchInStock
   })
+}
+
+function sortMockProducts(products: Product[], sort: ProductQueryState['sort']): Product[] {
+  const sorted = [...products]
+
+  switch (sort) {
+    case 'price-asc':
+      sorted.sort((a, b) => a.price - b.price)
+      break
+    case 'price-desc':
+      sorted.sort((a, b) => b.price - a.price)
+      break
+    case 'rating':
+      sorted.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+      break
+    case 'name':
+    default:
+      sorted.sort((a, b) => a.name.localeCompare(b.name))
+      break
+  }
+
+  return sorted
 }
 
 function mapMockProducts(query: ProductQueryState): ProductListResult {
   const filtered = filterMockProducts(MOCK_PRODUCTS, query)
-  const totalItems = filtered.length
+  const sorted = sortMockProducts(filtered, query.sort)
+  const totalItems = sorted.length
   const totalPages = Math.max(1, Math.ceil(totalItems / query.size))
   const safePage = Math.min(query.page, totalPages)
   const start = (safePage - 1) * query.size
   const end = start + query.size
-  const items = filtered.slice(start, end)
+  const items = sorted.slice(start, end)
 
   return {
     items,
@@ -288,7 +358,11 @@ async function fetchProductsFromApi(query: ProductQueryState): Promise<ProductLi
         search: query.search || undefined,
         category: query.category || undefined,
         page: query.page,
-        size: query.size
+        size: query.size,
+        sort: query.sort || undefined,
+        priceMin: query.priceMin ?? undefined,
+        priceMax: query.priceMax ?? undefined,
+        inStock: query.inStock ?? undefined
       }
     })
 

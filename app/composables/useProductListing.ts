@@ -62,6 +62,30 @@ export function useProductListing() {
     await updateQuery({ category, page: 1 })
   }
 
+  async function setSort(sort: ProductQueryState['sort']) {
+    await updateQuery({ sort, page: 1 })
+  }
+
+  async function setPriceRange(priceMin: number | null, priceMax: number | null) {
+    await updateQuery({ priceMin, priceMax, page: 1 })
+  }
+
+  async function setInStock(inStock: boolean | null) {
+    await updateQuery({ inStock, page: 1 })
+  }
+
+  async function clearFilters() {
+    await updateQuery({
+      search: '',
+      category: '',
+      page: 1,
+      sort: 'name',
+      priceMin: null,
+      priceMax: null,
+      inStock: null
+    })
+  }
+
   async function goToPage(page: number) {
     const nextPage = Math.min(Math.max(1, Math.floor(page)), totalPages.value)
     await updateQuery({ page: nextPage })
@@ -97,6 +121,10 @@ export function useProductListing() {
     fetchListing,
     setSearch,
     setCategory,
+    setSort,
+    setPriceRange,
+    setInStock,
+    clearFilters,
     goToPage,
     refresh
   }
