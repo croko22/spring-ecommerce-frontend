@@ -16,7 +16,7 @@ export type OrderItem = {
   quantity: number
 }
 
-export type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'delivered'
+export type OrderStatus = 'pending' | 'processing' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled'
 
 export type Order = {
   orderId: string
