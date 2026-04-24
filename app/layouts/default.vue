@@ -27,8 +27,10 @@ function onLogout() {
           <ShoppingCart class="w-5 h-5" />
           <Badge v-if="totalItems > 0" variant="destructive" class="ml-1">{{ totalItems }}</Badge>
         </button>
-        <NuxtLink to="/settings">Configuracion</NuxtLink>
         <template v-if="auth.isAuthenticated">
+          <NuxtLink to="/profile">Mi Perfil</NuxtLink>
+          <NuxtLink to="/orders">Mis Ordenes</NuxtLink>
+          <NuxtLink to="/settings">Configuracion</NuxtLink>
           <span class="app-shell__welcome">Hola, {{ displayName }}</span>
           <button type="button" class="app-shell__logout" @click="onLogout">Salir</button>
         </template>
