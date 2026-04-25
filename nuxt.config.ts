@@ -9,6 +9,12 @@ export default defineNuxtConfig({
     ]
   },
   css: ['~/assets/css/globals.css'],
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {}
+    }
+  },
   runtimeConfig: {
     public: {
       apiBase: 'http://localhost:8080/api'
