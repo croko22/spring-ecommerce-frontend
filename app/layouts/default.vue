@@ -60,27 +60,32 @@ function onLogout() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid #d9dee7;
+  padding: 0.875rem 1.5rem;
+  background-color: hsl(var(--card));
+  border-bottom: 1px solid var(--border-soft);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .app-shell__brand {
   text-decoration: none;
   color: var(--text-main);
   font-weight: 700;
-  letter-spacing: 0.02em;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
 }
 
 .app-shell__nav {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
+  font-size: 0.9375rem;
 }
 
 .app-shell__nav a {
   color: var(--text-main);
   text-decoration: none;
   font-weight: 500;
+  transition: color 0.2s ease;
 }
 
 .router-link-active {
@@ -95,6 +100,13 @@ function onLogout() {
   cursor: pointer;
   color: var(--text-main);
   position: relative;
+  padding: 0.25rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s ease;
+}
+
+.app-shell__cart-btn:hover {
+  background-color: hsl(var(--muted));
 }
 
 .app-shell__welcome {
@@ -102,12 +114,21 @@ function onLogout() {
 }
 
 .app-shell__logout {
-  border: 0;
   border-radius: 999px;
-  background: #fff;
+  background: transparent;
   border: 1px solid var(--border-soft);
-  padding: 0.4rem 0.7rem;
+  padding: 0.4rem 0.8rem;
   cursor: pointer;
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.app-shell__logout:hover {
+  color: hsl(var(--destructive));
+  border-color: hsl(var(--destructive));
+  background-color: hsl(var(--destructive) / 0.08);
 }
 
 .app-shell__main {

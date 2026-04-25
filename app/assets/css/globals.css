@@ -55,10 +55,13 @@
     --input: 223 16% 26%;
     --ring: 32 94% 58%;
 
+    --bg-page: #0f172a;
     --bg-card: hsl(var(--card));
     --text-main: hsl(var(--foreground));
     --text-muted: hsl(var(--muted-foreground));
     --accent: hsl(var(--primary));
+    --accent-strong: #f97316;
+    --accent-hover: #fb923c;
     --border-soft: hsl(var(--border));
     --danger: hsl(var(--destructive));
   }
@@ -78,7 +81,7 @@
     @apply bg-background text-foreground antialiased;
     margin: 0;
     font-family: var(--font-sans);
-    background-image: var(--bg-page);
+    background-color: var(--bg-page);
   }
 
   input,

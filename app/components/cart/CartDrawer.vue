@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '~/components/ui/sheet'
+
 const open = defineModel<boolean>('open', { default: false })
 
 const { items, subtotal, totalItems, isEmpty } = useCart()

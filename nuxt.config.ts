@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   modules: ['@nuxt/eslint', '@nuxt/fonts', '@nuxt/hints', '@nuxtjs/tailwindcss'],
   components: {
     dirs: [
-      '~/components'
+      { path: '~/components', ignore: ['**/index.ts'] }
     ]
   },
   css: ['~/assets/css/globals.css'],
