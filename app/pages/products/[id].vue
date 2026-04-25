@@ -423,12 +423,11 @@ h1 {
   color: #fff;
   font-weight: 700;
   transition: background-color 0.15s;
+  cursor: pointer;
 }
 
 .product-detail__add:hover {
   background: #9a3412;
-}
-  cursor: pointer;
 }
 
 .product-detail__add:disabled {
