@@ -3,6 +3,7 @@ import { ShoppingCart, Menu, LogOut, Package, User, Settings, ChevronDown } from
 import { Sheet, SheetContent } from '~/components/ui/sheet'
 
 const auth = useAuthState()
+auth.hydrate()
 const { totalItems } = useCart()
 const route = useRoute()
 
