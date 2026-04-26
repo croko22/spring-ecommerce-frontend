@@ -105,11 +105,11 @@
   }
   
   .btn-outline {
-    @apply border border-border bg-transparent hover:bg-accent hover:text-accent-foreground;
+    @apply border border-border bg-transparent hover:bg-secondary hover:text-secondary-foreground;
   }
   
   .btn-ghost {
-    @apply hover:bg-accent hover:text-accent-foreground;
+    @apply hover:bg-secondary hover:text-secondary-foreground;
   }
   
   .btn-danger {
