@@ -9,6 +9,11 @@ export default defineNuxtConfig({
     ]
   },
   css: ['~/assets/css/globals.css'],
+  vite: {
+    optimizeDeps: {
+      include: ['@vue/devtools-core', '@vue/devtools-kit', 'vue-sonner']
+    }
+  },
   postcss: {
     plugins: {
       tailwindcss: {},

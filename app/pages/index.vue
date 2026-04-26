@@ -4,5 +4,6 @@
 <template>
   <LandingHero />
   <LandingFeatures />
+  <LandingFeatured />
   <LandingCta />
 </template>
