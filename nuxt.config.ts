@@ -5,10 +5,15 @@ export default defineNuxtConfig({
   modules: ['@nuxt/eslint', '@nuxt/fonts', '@nuxt/hints', '@nuxtjs/tailwindcss'],
   components: {
     dirs: [
-      { path: '~/components', ignore: ['**/index.ts'] }
+      { path: '~/components', ignore: ['**/index.ts', '**/_exports.ts'], pathPrefix: false }
     ]
   },
   css: ['~/assets/css/globals.css'],
+  vite: {
+    optimizeDeps: {
+      include: ['@vue/devtools-core', '@vue/devtools-kit', 'vue-sonner']
+    }
+  },
   postcss: {
     plugins: {
       tailwindcss: {},

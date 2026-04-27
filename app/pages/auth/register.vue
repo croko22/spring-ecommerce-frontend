@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { toast } from 'vue-sonner'
+
 const auth = useAuthState()
 
 const form = reactive({
@@ -67,9 +69,13 @@ async function onSubmit() {
       password: form.password
     })
 
-    statusMessage.value = result?.message ?? 'Registro enviado correctamente.'
+    const msg = result?.message ?? 'Registro enviado correctamente.'
+    statusMessage.value = msg
+    toast.success(msg)
   } catch (error) {
-    statusError.value = error instanceof Error ? error.message : 'Ocurrio un error al registrarte.'
+    const msg = error instanceof Error ? error.message : 'Ocurrio un error al registrarte.'
+    statusError.value = msg
+    toast.error(msg)
   } finally {
     loading.value = false
   }
