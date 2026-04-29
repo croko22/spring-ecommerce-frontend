@@ -8,22 +8,23 @@ const { incrementItem, decrementItem } = useCart()
 </script>
 
 <template>
-  <div class="inline-flex items-center rounded-full border border-input overflow-hidden">
+  <div class="inline-flex items-center rounded-lg border border-input overflow-hidden bg-background">
     <button
       type="button"
-      class="h-8 w-8 flex items-center justify-center bg-muted hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      class="h-8 w-8 flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
       :disabled="quantity <= 1"
       @click="decrementItem(productId)"
     >
-      −
+      <Icon name="lucide:minus" class="w-3.5 h-3.5" />
     </button>
-    <span class="min-w-[2rem] text-center font-bold text-sm">{{ quantity }}</span>
+    <span class="min-w-[2rem] text-center font-semibold text-sm">{{ quantity }}</span>
     <button
       type="button"
-      class="h-8 w-8 flex items-center justify-center bg-muted hover:bg-muted/80 transition-colors"
+      class="h-8 w-8 flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+      :disabled="quantity >= 99"
       @click="incrementItem(productId)"
     >
-      +
+      <Icon name="lucide:plus" class="w-3.5 h-3.5" />
     </button>
   </div>
 </template>
