@@ -1,15 +1,9 @@
 <script setup lang="ts">
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '~/components/ui/sheet'
-import { Button } from '~/components/ui/button'
-import { formatPenAmount } from '~/utils/currency'
-import { ShoppingCart } from 'lucide-vue-next'
-
 const open = defineModel<boolean>('open', { default: false })
 
 const { items, subtotal, totalItems, isEmpty } = useCart()
 const shippingCost = computed(() => 0)
 const taxes = computed(() => 0)
-const orderTotal = computed(() => subtotal.value + shippingCost.value + taxes.value)
 
 function openDrawer() {
   open.value = true
@@ -24,35 +18,31 @@ defineExpose({ openDrawer, closeDrawer })
 
 <template>
   <Sheet v-model:open="open">
-    <SheetContent
-      side="right"
-      class="flex w-full flex-col shadow-2xl transition-all duration-300 sm:max-w-md"
-    >
-      <SheetHeader class="border-b bg-gradient-to-r from-muted/40 to-muted/20 px-1 py-4">
-        <SheetTitle class="flex items-center gap-2 text-xl">
-          <ShoppingCart class="h-5 w-5 text-muted-foreground" />
+    <SheetContent side="right" class="w-full sm:max-w-md flex flex-col p-0">
+      <SheetHeader class="px-5 pt-5 pb-3 border-b">
+        <SheetTitle class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
           Carrito
-          <span v-if="!isEmpty" class="text-sm font-normal text-muted-foreground">
-            ({{ totalItems }} {{ totalItems === 1 ? 'item' : 'items' }})
-          </span>
+          <span v-if="totalItems > 0" class="text-sm font-normal text-muted-foreground">({{ totalItems }})</span>
         </SheetTitle>
       </SheetHeader>
 
-      <div v-if="isEmpty" class="flex-1 px-1 py-6">
-        <CartEmpty />
+      <div v-if="isEmpty" class="flex-1 overflow-y-auto px-5">
+        <div class="py-8">
+          <CartEmpty />
+        </div>
       </div>
 
-      <div v-else class="flex flex-1 flex-col overflow-hidden px-1">
-        <ul
-          class="flex-1 list-none overflow-y-auto p-0"
-          aria-label="Productos en carrito"
-        >
-          <li v-for="item in items" :key="item.productId" class="py-3">
-            <CartItemCard :item="item" />
-          </li>
-        </ul>
+      <template v-else>
+        <div class="flex-1 overflow-y-auto px-5 py-4">
+          <ul class="list-none p-0 m-0 flex flex-col gap-3" aria-label="Productos en carrito">
+            <li v-for="item in items" :key="item.productId">
+              <CartItemCard :item="item" compact />
+            </li>
+          </ul>
+        </div>
 
-        <div class="mt-4 border-t pt-4">
+        <div class="border-t bg-background px-5 py-4">
           <CartSummary
             :subtotal="subtotal"
             :total-items="totalItems"
@@ -61,17 +51,7 @@ defineExpose({ openDrawer, closeDrawer })
             :is-empty="isEmpty"
           />
         </div>
-
-        <div class="mt-4 pb-2">
-          <Button
-            as="NuxtLink"
-            to="/checkout"
-            class="h-12 w-full text-base font-semibold shadow-md transition-all hover:shadow-lg"
-          >
-            Proceder al checkout — {{ formatPenAmount(orderTotal) }}
-          </Button>
-        </div>
-      </div>
+      </template>
     </SheetContent>
   </Sheet>
 </template>

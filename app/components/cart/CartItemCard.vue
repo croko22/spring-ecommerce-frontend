@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { CartItem } from '~/utils/cart'
 import { formatPenAmount } from '~/utils/currency'
-import { Trash2 } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
+import { Trash2 } from 'lucide-vue-next'
 
 const props = defineProps<{
   item: CartItem
 }>()
 
-const { incrementItem, decrementItem, removeItem } = useCart()
+const { removeItem } = useCart()
 const showRemoveDialog = ref(false)
 
 function confirmRemove() {
@@ -26,69 +26,58 @@ const lineTotal = computed(() => props.item.price * props.item.quantity)
 </script>
 
 <template>
-  <div class="border border-input rounded-xl bg-background p-4 shadow-sm hover:shadow-md transition-shadow">
-    <div class="flex gap-4">
+  <div class="border border-input rounded-xl bg-background p-3 grid grid-cols-[5rem_1fr_auto] gap-3 items-center max-sm:grid-cols-1 transition-colors hover:bg-accent/30">
+    <NuxtLink
+      :to="`/products/${encodeURIComponent(item.productId)}`"
+      class="block rounded-lg overflow-hidden bg-muted aspect-square max-sm:w-24 max-sm:mx-auto"
+    >
+      <img
+        :src="item.imageUrl"
+        :alt="item.name"
+        loading="lazy"
+        decoding="async"
+        class="w-full h-full object-cover"
+      >
+    </NuxtLink>
+
+    <div class="flex flex-col gap-1 min-w-0">
       <NuxtLink
         :to="`/products/${encodeURIComponent(item.productId)}`"
-        class="block w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden bg-muted flex-shrink-0"
+        class="font-semibold text-sm leading-tight truncate no-underline hover:underline"
       >
-        <img
-          :src="item.imageUrl"
-          :alt="item.name"
-          loading="lazy"
-          decoding="async"
-          class="w-full h-full object-cover"
-        >
+        {{ item.name }}
       </NuxtLink>
-
-      <div class="flex-1 min-w-0">
-        <div class="flex items-start justify-between gap-2">
-          <NuxtLink
-            :to="`/products/${encodeURIComponent(item.productId)}`"
-            class="font-semibold leading-tight hover:underline truncate block"
-          >
-            {{ item.name }}
-          </NuxtLink>
-          <p class="font-bold text-primary whitespace-nowrap">
-            {{ formatPenAmount(lineTotal) }}
-          </p>
-        </div>
-
-        <p class="text-sm text-muted-foreground mt-0.5">
-          {{ formatPenAmount(item.price) }} c/u
-        </p>
-
-        <div class="flex items-center justify-between mt-3">
-          <CartQuantityControl :product-id="item.productId" :quantity="item.quantity" />
-
-          <Button
-            variant="ghost"
-            size="sm"
-            class="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 px-2"
-            @click="confirmRemove"
-          >
-            <Trash2 class="w-4 h-4 mr-1.5" />
-            <span class="text-sm">Eliminar</span>
-          </Button>
-        </div>
+      <p class="text-xs text-muted-foreground m-0">{{ formatPenAmount(item.price) }} c/u</p>
+      <div class="flex items-center gap-3 mt-1.5">
+        <CartQuantityControl :product-id="item.productId" :quantity="item.quantity" />
+        <button
+          type="button"
+          class="inline-flex items-center gap-1 text-destructive text-xs font-medium hover:opacity-80 transition-opacity bg-transparent border-none cursor-pointer p-0"
+          @click="confirmRemove"
+        >
+          <Trash2 class="w-3.5 h-3.5" />
+          Eliminar
+        </button>
       </div>
     </div>
+
+    <p class="font-bold text-sm text-right m-0">{{ formatPenAmount(lineTotal) }}</p>
 
     <AlertDialog :open="showRemoveDialog" @update:open="showRemoveDialog = $event">
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>¿Eliminar producto?</AlertDialogTitle>
+          <AlertDialogTitle>Remove item?</AlertDialogTitle>
           <AlertDialogDescription>
-            ¿Deseas eliminar "{{ item.name }}" de tu carrito?
+            Remove {{ item.name }} from your cart?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel @click="showRemoveDialog = false">Cancel</AlertDialogCancel>
           <AlertDialogAction
             class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             @click="onRemove"
           >
-            Eliminar
+            Remove
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

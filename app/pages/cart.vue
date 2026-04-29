@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import { formatPenAmount } from '~/utils/currency'
 import { toast } from 'vue-sonner'
-import { Trash2 } from 'lucide-vue-next'
 
 const {
   items,
   subtotal,
   totalItems,
   isEmpty,
-  incrementItem,
-  decrementItem,
-  removeItem,
   clearCart
 } = useCart()
 
@@ -20,7 +15,7 @@ const orderTotal = computed(() => subtotal.value + shippingCost.value + taxes.va
 
 function handleClearCart() {
   clearCart()
-  toast('Carrito vaciado')
+  toast.success('Carrito vaciado')
 }
 
 useSeoMeta({
@@ -30,46 +25,36 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="container mx-auto max-w-6xl px-4 py-8">
-    <div class="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <header class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
       <div>
-        <p class="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Checkout
-        </p>
-        <h1 class="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
-          Carrito de compras
-        </h1>
-        <p class="mt-1 text-sm text-muted-foreground">
-          Revisa cantidades, elimina productos y confirma tu resumen.
-        </p>
+        <p class="text-xs font-medium tracking-widest uppercase text-muted-foreground m-0">Checkout</p>
+        <h1 class="text-2xl sm:text-3xl font-bold mt-1 mb-2">Carrito de compras</h1>
+        <p class="text-muted-foreground m-0">Revisa cantidades, elimina productos y confirma tu resumen.</p>
       </div>
-      <Button
-        variant="outline"
-        size="sm"
-        class="gap-1.5 text-destructive hover:bg-destructive/10 hover:text-destructive"
+      <button
+        type="button"
+        class="self-start sm:self-auto inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-input bg-background text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-60 disabled:cursor-not-allowed disabled:pointer-events-none"
         :disabled="isEmpty"
         @click="handleClearCart"
       >
-        <Trash2 class="h-4 w-4" />
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
         Vaciar carrito
-      </Button>
+      </button>
+    </header>
+
+    <div v-if="isEmpty">
+      <CartEmpty />
     </div>
 
-    <CartEmpty v-if="isEmpty" />
+    <div v-else class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.8fr)_minmax(16rem,1fr)] gap-6 items-start">
+      <ul class="list-none p-0 m-0 flex flex-col gap-4" aria-label="Productos en carrito">
+        <li v-for="item in items" :key="item.productId">
+          <CartItemCard :item="item" />
+        </li>
+      </ul>
 
-    <div v-else class="grid gap-8 lg:grid-cols-[1fr_22rem]">
-      <div>
-        <h2 class="mb-4 text-lg font-semibold">
-          Productos ({{ totalItems }})
-        </h2>
-        <ul class="flex flex-col gap-4" aria-label="Productos en carrito">
-          <li v-for="item in items" :key="item.productId">
-            <CartItemCard :item="item" />
-          </li>
-        </ul>
-      </div>
-
-      <div class="lg:sticky lg:top-20">
+      <div class="lg:sticky lg:top-6">
         <CartSummary
           :subtotal="subtotal"
           :total-items="totalItems"
@@ -79,5 +64,5 @@ useSeoMeta({
         />
       </div>
     </div>
-  </div>
+  </section>
 </template>
