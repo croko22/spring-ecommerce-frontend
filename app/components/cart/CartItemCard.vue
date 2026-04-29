@@ -2,6 +2,7 @@
 import type { CartItem } from '~/utils/cart'
 import { formatPenAmount } from '~/utils/currency'
 import { toast } from 'vue-sonner'
+import { Trash2 } from 'lucide-vue-next'
 
 const props = defineProps<{
   item: CartItem
@@ -25,10 +26,10 @@ const lineTotal = computed(() => props.item.price * props.item.quantity)
 </script>
 
 <template>
-  <div class="border border-input rounded-xl bg-background p-3 grid grid-cols-[6rem_1fr_auto] gap-3 items-center max-sm:grid-cols-1">
+  <div class="border border-input rounded-xl bg-background p-3 grid grid-cols-[5rem_1fr_auto] gap-3 items-center max-sm:grid-cols-1 transition-colors hover:bg-accent/30">
     <NuxtLink
       :to="`/products/${encodeURIComponent(item.productId)}`"
-      class="block rounded-lg overflow-hidden bg-muted aspect-square max-sm:w-24"
+      class="block rounded-lg overflow-hidden bg-muted aspect-square max-sm:w-24 max-sm:mx-auto"
     >
       <img
         :src="item.imageUrl"
@@ -39,29 +40,29 @@ const lineTotal = computed(() => props.item.price * props.item.quantity)
       >
     </NuxtLink>
 
-    <div class="flex flex-col gap-1">
+    <div class="flex flex-col gap-1 min-w-0">
       <NuxtLink
         :to="`/products/${encodeURIComponent(item.productId)}`"
-        class="font-bold no-underline"
+        class="font-semibold text-sm leading-tight truncate no-underline hover:underline"
       >
         {{ item.name }}
       </NuxtLink>
-      <p class="text-sm text-muted-foreground">{{ formatPenAmount(item.price) }} c/u</p>
-      <div class="flex items-center gap-3 mt-2">
+      <p class="text-xs text-muted-foreground m-0">{{ formatPenAmount(item.price) }} c/u</p>
+      <div class="flex items-center gap-3 mt-1.5">
         <CartQuantityControl :product-id="item.productId" :quantity="item.quantity" />
         <button
           type="button"
-          class="text-destructive text-sm underline hover:opacity-80 transition-opacity"
+          class="inline-flex items-center gap-1 text-destructive text-xs font-medium hover:opacity-80 transition-opacity bg-transparent border-none cursor-pointer p-0"
           @click="confirmRemove"
         >
+          <Trash2 class="w-3.5 h-3.5" />
           Eliminar
         </button>
       </div>
     </div>
 
-    <p class="font-extrabold text-orange-900 m-0">{{ formatPenAmount(lineTotal) }}</p>
+    <p class="font-bold text-sm text-right m-0">{{ formatPenAmount(lineTotal) }}</p>
 
-    <!-- AlertDialog for remove confirmation (task 4.2) -->
     <AlertDialog :open="showRemoveDialog" @update:open="showRemoveDialog = $event">
       <AlertDialogContent>
         <AlertDialogHeader>

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { formatPenAmount } from '~/utils/currency'
 import { toast } from 'vue-sonner'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
+import { Trash2, ShoppingCart } from 'lucide-vue-next'
 
 const {
   items,
@@ -30,6 +33,19 @@ function handleClearCart() {
   toast('Cart cleared')
 }
 
+const discountCode = ref('')
+const appliedDiscount = ref<string | null>(null)
+
+function applyDiscount() {
+  if (!discountCode.value.trim()) {
+    toast('Ingresa un codigo de descuento')
+    return
+  }
+  toast('Codigo ' + discountCode.value + ' aplicado')
+  appliedDiscount.value = discountCode.value.trim()
+  discountCode.value = ''
+}
+
 useSeoMeta({
   title: 'Carrito de compras',
   description: 'Gestiona tus productos y revisa el resumen de compra.'
@@ -37,359 +53,142 @@ useSeoMeta({
 </script>
 
 <template>
-  <section class="cart-page">
-    <header class="cart-page__header">
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+    <header class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
       <div>
-        <p class="cart-page__eyebrow">Checkout</p>
-        <h1>Carrito de compras</h1>
-        <p class="cart-page__subtitle">Revisa cantidades, elimina productos y confirma tu resumen.</p>
+        <p class="text-xs font-medium tracking-wider uppercase text-muted-foreground m-0">Checkout</p>
+        <h1 class="text-2xl sm:text-3xl font-bold mt-1 mb-1">Carrito de compras</h1>
+        <p class="text-muted-foreground text-sm m-0">Revisa cantidades, elimina productos y confirma tu resumen.</p>
       </div>
-      <button
-        type="button"
-        class="cart-page__clear"
+      <Button
+        variant="outline"
+        size="sm"
         :disabled="isEmpty"
-        @click="clearCart"
+        class="self-start sm:self-auto"
+        @click="handleClearCart"
       >
+        <Trash2 class="w-4 h-4 mr-1" />
         Vaciar carrito
-      </button>
+      </Button>
     </header>
 
-    <div v-if="isEmpty" class="cart-empty">
-      <p class="cart-empty__title">Tu carrito esta vacio.</p>
-      <p class="cart-empty__text">Agrega productos desde el catalogo para iniciar tu compra.</p>
-      <NuxtLink class="cart-empty__cta" to="/products">Ir al catalogo</NuxtLink>
+    <div v-if="isEmpty" class="border border-input rounded-xl bg-background p-10 text-center flex flex-col items-center">
+      <div class="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-5">
+        <ShoppingCart class="w-10 h-10 text-muted-foreground" />
+      </div>
+      <p class="text-xl font-bold m-0">Tu carrito esta vacio.</p>
+      <p class="text-muted-foreground mt-2 text-sm max-w-sm">Agrega productos desde el catalogo para iniciar tu compra.</p>
+      <NuxtLink
+        to="/products"
+        class="inline-block mt-5 px-6 py-3 rounded-lg bg-gradient-to-br from-primary to-primary/90 text-white font-bold no-underline hover:opacity-95 transition-opacity"
+      >
+        Ir al catalogo
+      </NuxtLink>
     </div>
 
-    <div v-else class="cart-layout">
-      <ul class="cart-items" aria-label="Productos en carrito">
-        <li v-for="item in items" :key="item.productId" class="cart-item">
-          <NuxtLink class="cart-item__media" :to="`/products/${encodeURIComponent(item.productId)}`">
-            <img :src="item.imageUrl" :alt="item.name" loading="lazy" decoding="async">
+    <div v-else class="grid grid-cols-1 lg:grid-cols-[1.8fr_1fr] gap-6 items-start">
+      <ul class="list-none p-0 m-0 flex flex-col gap-3" aria-label="Productos en carrito">
+        <li v-for="item in items" :key="item.productId" class="border border-input rounded-xl bg-background p-4 grid grid-cols-[5rem_1fr_auto] gap-4 items-center max-sm:grid-cols-1">
+          <NuxtLink
+            class="block rounded-lg overflow-hidden bg-muted aspect-square max-sm:w-24 max-sm:mx-auto"
+            :to="'/products/' + encodeURIComponent(item.productId)"
+          >
+            <img :src="item.imageUrl" :alt="item.name" loading="lazy" decoding="async" class="w-full h-full object-cover">
           </NuxtLink>
 
-          <div class="cart-item__body">
-            <NuxtLink class="cart-item__name" :to="`/products/${encodeURIComponent(item.productId)}`">
+          <div class="flex flex-col gap-1 min-w-0">
+            <NuxtLink
+              class="font-semibold leading-tight no-underline hover:underline truncate"
+              :to="'/products/' + encodeURIComponent(item.productId)"
+            >
               {{ item.name }}
             </NuxtLink>
-            <p class="cart-item__price">{{ formatAmount(item.price) }} c/u</p>
+            <p class="text-sm text-muted-foreground m-0">{{ formatAmount(item.price) }} c/u</p>
 
-            <div class="cart-item__actions">
-              <div class="cart-item__qty" aria-label="Control de cantidad">
-                <button type="button" @click="decrementItem(item.productId)">-</button>
-                <span>{{ item.quantity }}</span>
-                <button type="button" @click="incrementItem(item.productId)">+</button>
+            <div class="flex items-center gap-3 mt-2">
+              <div class="inline-flex items-center rounded-full border border-input overflow-hidden">
+                <button
+                  type="button"
+                  class="h-8 w-8 flex items-center justify-center bg-muted hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-0"
+                  :disabled="item.quantity <= 1"
+                  @click="decrementItem(item.productId)"
+                >
+                  -
+                </button>
+                <span class="min-w-[2rem] text-center font-bold text-sm">{{ item.quantity }}</span>
+                <button
+                  type="button"
+                  class="h-8 w-8 flex items-center justify-center bg-muted hover:bg-muted/80 transition-colors border-0"
+                  @click="incrementItem(item.productId)"
+                >
+                  +
+                </button>
               </div>
 
-              <button type="button" class="cart-item__remove" @click="removeItem(item.productId)">
+              <button
+                type="button"
+                class="inline-flex items-center gap-1 text-destructive text-sm font-medium hover:opacity-80 transition-opacity bg-transparent border-none cursor-pointer p-0"
+                @click="removeItem(item.productId)"
+              >
+                <Trash2 class="w-4 h-4" />
                 Eliminar
               </button>
             </div>
           </div>
 
-          <p class="cart-item__subtotal">{{ itemSubtotal(item.price, item.quantity) }}</p>
+          <p class="font-bold text-lg text-right m-0 max-sm:text-left">{{ itemSubtotal(item.price, item.quantity) }}</p>
         </li>
       </ul>
 
-      <aside class="cart-summary">
-        <h2>Resumen</h2>
-        <dl>
-          <div>
-            <dt>Items</dt>
-            <dd>{{ totalItems }}</dd>
+      <aside class="border border-input rounded-xl bg-background p-5 sticky top-4">
+        <h2 class="text-lg font-semibold mt-0">Resumen del pedido</h2>
+
+        <dl class="mt-4 grid gap-3 text-sm">
+          <div class="flex justify-between items-center">
+            <dt class="text-muted-foreground">Items ({{ totalItems }})</dt>
+            <dd class="m-0 font-medium">{{ formatAmount(subtotal) }}</dd>
           </div>
-          <div>
-            <dt>Subtotal</dt>
-            <dd>{{ formatAmount(subtotal) }}</dd>
+          <div class="flex justify-between items-center">
+            <dt class="text-muted-foreground">Envio</dt>
+            <dd class="m-0 font-medium">{{ formatAmount(shippingCost) }}</dd>
           </div>
-          <div>
-            <dt>Envio</dt>
-            <dd>{{ formatAmount(shippingCost) }}</dd>
+          <div class="flex justify-between items-center">
+            <dt class="text-muted-foreground">Impuestos</dt>
+            <dd class="m-0 font-medium">{{ formatAmount(taxes) }}</dd>
           </div>
-          <div>
-            <dt>Impuestos</dt>
-            <dd>{{ formatAmount(taxes) }}</dd>
+          <div v-if="appliedDiscount" class="flex justify-between items-center text-green-600">
+            <dt class="font-medium">Descuento</dt>
+            <dd class="m-0 font-medium">-{{ appliedDiscount }}</dd>
           </div>
-          <div class="cart-summary__total">
-            <dt>Total</dt>
-            <dd>{{ formatAmount(orderTotal) }}</dd>
+
+          <div class="mt-2 pt-3 border-t border-border">
+            <div class="flex justify-between items-center">
+              <dt class="font-semibold text-base">Total</dt>
+              <dd class="m-0 text-xl font-bold">{{ formatAmount(orderTotal) }}</dd>
+            </div>
           </div>
         </dl>
 
-        <NuxtLink
-          type="button"
-          class="cart-summary__checkout"
-          :class="{ 'cart-summary__checkout--disabled': isEmpty }"
-          :to="isEmpty ? undefined : '/checkout'"
+        <div class="mt-4 flex gap-2">
+          <Input
+            v-model="discountCode"
+            placeholder="Codigo de descuento"
+            class="h-10 text-sm"
+            @keyup.enter="applyDiscount"
+          />
+          <Button variant="outline" size="sm" class="h-10 shrink-0" @click="applyDiscount">
+            Aplicar
+          </Button>
+        </div>
+
+        <Button
+          as="NuxtLink"
+          to="/checkout"
+          class="w-full mt-4 h-12 text-base font-semibold"
         >
-          {{ isEmpty ? 'Agrega productos al carrito' : 'Continuar compra' }}
-        </NuxtLink>
+          Proceder al checkout
+        </Button>
       </aside>
     </div>
   </section>
 </template>
-
-<style scoped>
-.cart-page {
-  max-width: 75rem;
-  margin: 0 auto;
-  padding: 2rem 1.2rem 3rem;
-}
-
-.cart-page__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.cart-page__eyebrow {
-  margin: 0;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-h1 {
-  margin: 0.25rem 0 0;
-  font-size: clamp(1.45rem, 3.5vw, 2rem);
-}
-
-.cart-page__subtitle {
-  margin: 0.45rem 0 0;
-  color: var(--text-muted);
-}
-
-.cart-page__clear {
-  border: 1px solid var(--border-soft);
-  background: #fff;
-  border-radius: 999px;
-  padding: 0.55rem 0.9rem;
-  cursor: pointer;
-}
-
-.cart-page__clear:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.cart-empty {
-  margin-top: 1rem;
-  border: 1px solid var(--border-soft);
-  background: #fff;
-  border-radius: 0.85rem;
-  padding: 1rem;
-}
-
-.cart-empty__title {
-  margin: 0;
-  font-weight: 700;
-}
-
-.cart-empty__text {
-  margin: 0.45rem 0 0;
-  color: var(--text-muted);
-}
-
-.cart-empty__cta {
-  display: inline-block;
-  margin-top: 0.85rem;
-  padding: 0.6rem 0.95rem;
-  border-radius: 0.65rem;
-  text-decoration: none;
-  color: #fff;
-  background: linear-gradient(125deg, var(--accent), var(--accent-strong));
-  font-weight: 700;
-}
-
-.cart-layout {
-  margin-top: 1rem;
-  display: grid;
-  grid-template-columns: minmax(0, 1.8fr) minmax(16rem, 1fr);
-  gap: 1rem;
-  align-items: start;
-}
-
-.cart-items {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 0.75rem;
-}
-
-.cart-item {
-  border: 1px solid var(--border-soft);
-  border-radius: 0.85rem;
-  background: #fff;
-  padding: 0.8rem;
-  display: grid;
-  grid-template-columns: 6rem minmax(0, 1fr) auto;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.cart-item__media {
-  display: block;
-  border-radius: 0.65rem;
-  overflow: hidden;
-  background: #eef2f7;
-  aspect-ratio: 1 / 1;
-}
-
-.cart-item__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.cart-item__name {
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.cart-item__price {
-  margin: 0.35rem 0 0;
-  color: var(--text-muted);
-  font-size: 0.92rem;
-}
-
-.cart-item__actions {
-  margin-top: 0.65rem;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.cart-item__qty {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--border-soft);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.cart-item__qty button {
-  border: 0;
-  background: #f8fafc;
-  width: 2rem;
-  height: 2rem;
-  cursor: pointer;
-}
-
-.cart-item__qty span {
-  min-width: 1.9rem;
-  text-align: center;
-  font-weight: 700;
-}
-
-.cart-item__remove {
-  border: 0;
-  background: transparent;
-  color: #dc2626;
-  font-weight: 600;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.cart-item__subtotal {
-  margin: 0;
-  font-weight: 800;
-  color: #c2410c;
-}
-
-.cart-summary {
-  border: 1px solid var(--border-soft);
-  border-radius: 0.85rem;
-  background: #fff;
-  padding: 0.95rem;
-}
-
-h2 {
-  margin: 0;
-  font-size: 1.08rem;
-}
-
-.cart-summary dl {
-  margin: 0.85rem 0 0;
-  display: grid;
-  gap: 0.55rem;
-}
-
-.cart-summary dl > div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
-.cart-summary dt {
-  color: var(--text-muted);
-}
-
-.cart-summary dd {
-  margin: 0;
-  font-weight: 600;
-}
-
-.cart-summary__total {
-  margin-top: 0.2rem;
-  padding-top: 0.6rem;
-  border-top: 1px solid var(--border-soft);
-}
-
-.cart-summary__total dd {
-  font-size: 1.08rem;
-  color: #0f172a;
-}
-
-.cart-summary__checkout {
-  width: 100%;
-  margin-top: 0.9rem;
-  border: none;
-  border-radius: 0.65rem;
-  padding: 0.75rem 0.85rem;
-  background: #c2410c;
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-
-.cart-summary__checkout:hover {
-  background: #9a3412;
-}
-
-.cart-summary__checkout:disabled,
-.cart-summary__checkout--disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-@media (max-width: 860px) {
-  .cart-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 620px) {
-  .cart-page {
-    padding-inline: 0.85rem;
-  }
-
-  .cart-item {
-    grid-template-columns: 1fr;
-  }
-
-  .cart-item__media {
-    width: 6rem;
-  }
-
-  .cart-item__subtotal {
-    justify-self: flex-start;
-  }
-}
-</style>
