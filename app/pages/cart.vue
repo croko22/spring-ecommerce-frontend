@@ -2,23 +2,26 @@
 import { formatPenAmount } from '~/utils/currency'
 import { toast } from 'vue-sonner'
 import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
-import { Trash2, ShoppingCart } from 'lucide-vue-next'
+import { Trash2, ShoppingCart, X } from 'lucide-vue-next'
 
 const {
   items,
   subtotal,
   totalItems,
   isEmpty,
+  igv,
+  shippingCost,
+  discountAmount,
+  total,
+  discountCode,
+  appliedDiscount,
+  applyDiscountCode,
+  removeDiscountCode,
   incrementItem,
   decrementItem,
   removeItem,
   clearCart
 } = useCart()
-
-const shippingCost = computed(() => 0)
-const taxes = computed(() => 0)
-const orderTotal = computed(() => subtotal.value + shippingCost.value + taxes.value)
 
 function formatAmount(amount: number) {
   return formatPenAmount(amount)
@@ -33,17 +36,17 @@ function handleClearCart() {
   toast('Cart cleared')
 }
 
-const discountCode = ref('')
-const appliedDiscount = ref<string | null>(null)
-
-function applyDiscount() {
+async function handleApplyDiscount() {
   if (!discountCode.value.trim()) {
     toast('Ingresa un codigo de descuento')
     return
   }
-  toast('Codigo ' + discountCode.value + ' aplicado')
-  appliedDiscount.value = discountCode.value.trim()
-  discountCode.value = ''
+  try {
+    await applyDiscountCode()
+    toast('Codigo de descuento aplicado')
+  } catch {
+    toast('Codigo de descuento invalido')
+  }
 }
 
 useSeoMeta({
@@ -143,43 +146,48 @@ useSeoMeta({
       <aside class="border border-input rounded-xl bg-background p-5 sticky top-4">
         <h2 class="text-lg font-semibold mt-0">Resumen del pedido</h2>
 
-        <dl class="mt-4 grid gap-3 text-sm">
-          <div class="flex justify-between items-center">
-            <dt class="text-muted-foreground">Items ({{ totalItems }})</dt>
-            <dd class="m-0 font-medium">{{ formatAmount(subtotal) }}</dd>
-          </div>
-          <div class="flex justify-between items-center">
-            <dt class="text-muted-foreground">Envio</dt>
-            <dd class="m-0 font-medium">{{ formatAmount(shippingCost) }}</dd>
-          </div>
-          <div class="flex justify-between items-center">
-            <dt class="text-muted-foreground">Impuestos</dt>
-            <dd class="m-0 font-medium">{{ formatAmount(taxes) }}</dd>
-          </div>
-          <div v-if="appliedDiscount" class="flex justify-between items-center text-green-600">
-            <dt class="font-medium">Descuento</dt>
-            <dd class="m-0 font-medium">-{{ appliedDiscount }}</dd>
-          </div>
+    <dl class="mt-4 grid gap-3 text-sm">
+      <div class="flex justify-between items-center">
+        <dt class="text-muted-foreground">Items ({{ totalItems }})</dt>
+        <dd class="m-0 font-medium">{{ formatAmount(subtotal) }}</dd>
+      </div>
+      <div class="flex justify-between items-center">
+        <dt class="text-muted-foreground">Envio</dt>
+        <dd class="m-0 font-medium">{{ formatAmount(shippingCost) }}</dd>
+      </div>
+      <div class="flex justify-between items-center">
+        <dt class="text-muted-foreground">IGV (18%)</dt>
+        <dd class="m-0 font-medium">{{ formatAmount(igv) }}</dd>
+      </div>
+      <div v-if="appliedDiscount" class="flex justify-between items-center text-green-600">
+        <dt class="font-medium flex items-center gap-1">
+          Descuento ({{ appliedDiscount.type === 'percentage' ? appliedDiscount.value + '%' : 'envio gratis' }})
+          <button type="button" class="inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-green-100 transition-colors border-none bg-transparent cursor-pointer p-0" @click="removeDiscountCode">
+            <X class="w-3 h-3" />
+          </button>
+        </dt>
+        <dd class="m-0 font-medium">-{{ formatAmount(discountAmount) }}</dd>
+      </div>
 
-          <div class="mt-2 pt-3 border-t border-border">
-            <div class="flex justify-between items-center">
-              <dt class="font-semibold text-base">Total</dt>
-              <dd class="m-0 text-xl font-bold">{{ formatAmount(orderTotal) }}</dd>
-            </div>
-          </div>
-        </dl>
-
-        <div class="mt-4 flex gap-2">
-          <Input
-            v-model="discountCode"
-            placeholder="Codigo de descuento"
-            class="h-10 text-sm"
-            @keyup.enter="applyDiscount"
-          />
-          <Button variant="outline" size="sm" class="h-10 shrink-0" @click="applyDiscount">
-            Aplicar
-          </Button>
+      <div class="mt-2 pt-3 border-t border-border">
+        <div class="flex justify-between items-center">
+          <dt class="font-semibold text-base">Total</dt>
+          <dd class="m-0 text-xl font-bold">{{ formatAmount(total) }}</dd>
         </div>
+      </div>
+    </dl>
+
+    <div class="mt-4 flex gap-2">
+      <input
+        v-model="discountCode"
+        placeholder="Codigo de descuento"
+        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        @keyup.enter="handleApplyDiscount"
+      >
+      <Button variant="outline" size="sm" class="h-10 shrink-0" @click="handleApplyDiscount">
+        Aplicar
+      </Button>
+    </div>
 
         <Button
           as="NuxtLink"
