@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { formatPenAmount } from '~/utils/currency'
+import { Button } from '~/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader } from '~/components/ui/card'
 
 const route = useRoute()
 const orderId = computed(() => route.query.orderId as string)
@@ -23,164 +25,80 @@ useSeoMeta({
 </script>
 
 <template>
-  <section class="confirmation-page">
-    <div class="confirmation-card">
+  <section class="flex min-h-[60vh] items-center justify-center px-4 py-8">
+    <Card class="w-full max-w-md text-center">
       <!-- Success state -->
       <template v-if="order">
-        <div class="confirmation-icon">✅</div>
-        <h1 class="confirmation-title">Pedido confirmado</h1>
-        <p class="confirmation-subtitle">Gracias por tu compra</p>
+        <CardHeader class="items-center">
+          <div class="mb-4 text-5xl">✅</div>
+          <h1 class="m-0 text-2xl font-semibold">Pedido confirmado</h1>
+          <p class="mt-2 mb-0 text-muted-foreground">Gracias por tu compra</p>
+        </CardHeader>
 
-        <div class="order-info">
-          <div class="order-info__row">
-            <span class="order-info__label">Numero de pedido:</span>
-            <span class="order-info__value">{{ order.orderId }}</span>
+        <CardContent>
+          <div class="mb-6 rounded-[0.65rem] bg-muted p-4 text-left">
+            <div class="flex justify-between border-b border-border py-1.5 last:border-b-0">
+              <span class="text-sm text-muted-foreground">Numero de pedido:</span>
+              <span class="font-semibold">{{ order.orderId }}</span>
+            </div>
+            <div class="flex justify-between border-b border-border py-1.5 last:border-b-0">
+              <span class="text-sm text-muted-foreground">Estado:</span>
+              <span class="font-semibold text-green-800">
+                {{ order.status === 'confirmed' ? 'Confirmado' : 'Pendiente' }}
+              </span>
+            </div>
+            <div class="flex justify-between border-b border-border py-1.5 last:border-b-0">
+              <span class="text-sm text-muted-foreground">Total:</span>
+              <span class="text-lg font-semibold text-orange-900">
+                {{ formatPenAmount(order.total) }}
+              </span>
+            </div>
+            <div class="flex justify-between py-1.5">
+              <span class="text-sm text-muted-foreground">Items:</span>
+              <span class="font-semibold">{{ order.items.length }} productos</span>
+            </div>
           </div>
 
-          <div class="order-info__row">
-            <span class="order-info__label">Estado:</span>
-            <span class="order-info__value order-info__value--status">
-              {{ order.status === 'confirmed' ? 'Confirmado' : 'Pendiente' }}
-            </span>
-          </div>
-
-          <div class="order-info__row">
-            <span class="order-info__label">Total:</span>
-            <span class="order-info__value order-info__value--total">
-              {{ formatPenAmount(order.total) }}
-            </span>
-          </div>
-
-          <div class="order-info__row">
-            <span class="order-info__label">Items:</span>
-            <span class="order-info__value">{{ order.items.length }} productos</span>
-          </div>
-        </div>
-
-        <p class="confirmation-message">
-          Recibiras un correo de confirmacion cuando tu pedido sea procesado.
-        </p>
+          <p class="mb-6 text-sm text-muted-foreground">
+            Recibiras un correo de confirmacion cuando tu pedido sea procesado.
+          </p>
+        </CardContent>
       </template>
 
       <!-- Error state -->
       <template v-else-if="hasError">
-        <div class="confirmation-icon confirmation-icon--error">❌</div>
-        <h1 class="confirmation-title">Algo salio mal</h1>
-        <p class="confirmation-subtitle">No pudimos encontrar tu pedido</p>
-        <p class="confirmation-message">
-          Por favor verifica el numero de pedido o contacta con soporte.
-        </p>
+        <CardHeader class="items-center">
+          <div class="mb-4 text-5xl grayscale">❌</div>
+          <h1 class="m-0 text-2xl font-semibold">Algo salio mal</h1>
+          <p class="mt-2 mb-0 text-muted-foreground">No pudimos encontrar tu pedido</p>
+        </CardHeader>
+
+        <CardContent>
+          <p class="mb-6 text-sm text-muted-foreground">
+            Por favor verifica el numero de pedido o contacta con soporte.
+          </p>
+        </CardContent>
       </template>
 
       <!-- No order state -->
       <template v-else>
-        <div class="confirmation-icon confirmation-icon--error">❌</div>
-        <h1 class="confirmation-title">Sin pedido</h1>
-        <p class="confirmation-message">
-          No tienes ningun pedido reciente.
-        </p>
+        <CardHeader class="items-center">
+          <div class="mb-4 text-5xl grayscale">❌</div>
+          <h1 class="m-0 text-2xl font-semibold">Sin pedido</h1>
+        </CardHeader>
+
+        <CardContent>
+          <p class="mb-6 text-sm text-muted-foreground">
+            No tienes ningun pedido reciente.
+          </p>
+        </CardContent>
       </template>
 
-      <NuxtLink to="/products" class="confirmation-cta">
-        Continuar comprando
-      </NuxtLink>
-    </div>
+      <CardFooter class="justify-center">
+        <Button as="a" href="/products" size="lg" class="font-bold">
+          Continuar comprando
+        </Button>
+      </CardFooter>
+    </Card>
   </section>
 </template>
-
-<style scoped>
-.confirmation-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 60vh;
-  padding: 2rem 1rem;
-}
-
-.confirmation-card {
-  max-width: 28rem;
-  width: 100%;
-  background: #fff;
-  border: 1px solid var(--border-soft);
-  border-radius: 1rem;
-  padding: 2rem;
-  text-align: center;
-}
-
-.confirmation-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.confirmation-icon--error {
-  filter: grayscale(1);
-}
-
-.confirmation-title {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.confirmation-subtitle {
-  margin: 0.5rem 0 1.5rem;
-  color: var(--text-muted);
-}
-
-.order-info {
-  background: #fafafa;
-  border-radius: 0.65rem;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  text-align: left;
-}
-
-.order-info__row {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.4rem 0;
-  border-bottom: 1px solid var(--border-soft);
-}
-
-.order-info__row:last-child {
-  border-bottom: none;
-}
-
-.order-info__label {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-
-.order-info__value {
-  font-weight: 600;
-}
-
-.order-info__value--status {
-  color: #2e7d32;
-}
-
-.order-info__value--total {
-  color: #7c2d12;
-  font-size: 1.1rem;
-}
-
-.confirmation-message {
-  margin: 0 0 1.5rem;
-  color: var(--text-muted);
-  font-size: 0.95rem;
-}
-
-.confirmation-cta {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.65rem;
-  text-decoration: none;
-  color: #fff;
-  background: linear-gradient(125deg, var(--accent), var(--accent-strong));
-  font-weight: 700;
-  transition: opacity 0.2s;
-}
-
-.confirmation-cta:hover {
-  opacity: 0.95;
-}
-</style>
