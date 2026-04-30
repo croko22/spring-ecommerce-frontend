@@ -1,4 +1,5 @@
-import type { Order, CreateOrderRequest, OrderItem, ShippingAddress } from '~/types/order'
+import type { Order, CreateOrderRequest, OrderItem, ShippingAddress, DiscountCode } from '~/types/order'
+import { SHIPPING_COST, IGV_RATE } from '~/types/order'
 
 const MOCK_ORDERS: Order[] = [
   {
@@ -15,8 +16,10 @@ const MOCK_ORDERS: Order[] = [
       region: 'Lima'
     },
     subtotal: 89.9,
+    igv: 16.18,
     shippingCost: 10,
-    total: 99.9,
+    discount: 0,
+    total: 116.08,
     status: 'delivered',
     createdAt: '2024-01-15T10:30:00Z'
   },
@@ -35,8 +38,10 @@ const MOCK_ORDERS: Order[] = [
       region: 'Lima'
     },
     subtotal: 126.0,
+    igv: 22.68,
     shippingCost: 10,
-    total: 136.0,
+    discount: 0,
+    total: 158.68,
     status: 'shipped',
     createdAt: '2024-02-20T14:15:00Z'
   },
@@ -54,8 +59,10 @@ const MOCK_ORDERS: Order[] = [
       region: 'Lima'
     },
     subtotal: 199.0,
+    igv: 35.82,
     shippingCost: 10,
-    total: 209.0,
+    discount: 0,
+    total: 244.82,
     status: 'processing',
     createdAt: '2024-03-10T09:00:00Z'
   },
@@ -73,8 +80,10 @@ const MOCK_ORDERS: Order[] = [
       region: 'Lima'
     },
     subtotal: 38.97,
+    igv: 7.01,
     shippingCost: 10,
-    total: 48.97,
+    discount: 0,
+    total: 55.98,
     status: 'cancelled',
     createdAt: '2024-03-25T16:45:00Z'
   },
@@ -93,8 +102,10 @@ const MOCK_ORDERS: Order[] = [
       region: 'Lima'
     },
     subtotal: 92.0,
+    igv: 16.56,
     shippingCost: 10,
-    total: 102.0,
+    discount: 0,
+    total: 118.56,
     status: 'confirmed',
     createdAt: '2024-04-05T11:20:00Z'
   }
@@ -175,13 +186,15 @@ function normalizeOrder(entry: unknown): Order | null {
     items,
     shipping: normalizeShippingAddress(order.shipping),
     subtotal: Number(order.subtotal ?? order.total ?? 0),
+    igv: Number(order.igv ?? 0),
     shippingCost: Number(order.shippingCost ?? 0),
+    discount: Number(order.discount ?? 0),
     total: Number(order.total ?? 0),
     status: (['pending', 'processing', 'confirmed', 'shipped', 'delivered', 'cancelled'].includes(
       String(order.status)
     )
-      ? String(order.status)
-      : 'pending') as Order['status'],
+    ? String(order.status)
+    : 'pending') as Order['status'],
     createdAt: String(order.createdAt ?? new Date().toISOString())
   }
 }
@@ -193,7 +206,9 @@ async function submitOrderToApi(request: CreateOrderRequest): Promise<Order | nu
       body: {
         items: request.items,
         shipping: request.shipping,
-        paymentMethod: request.paymentMethod
+        paymentMethod: request.paymentMethod,
+        discountCode: request.discountCode,
+        creditCard: request.creditCard
       }
     })
 
@@ -204,15 +219,18 @@ async function submitOrderToApi(request: CreateOrderRequest): Promise<Order | nu
     const orderId = String(data.value.orderId ?? `ORD-${Date.now()}`)
     const items = request.items
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-    const shippingCost = 10
-    const total = subtotal + shippingCost
+    const igv = Math.round(subtotal * IGV_RATE * 100) / 100
+    const shippingCost = SHIPPING_COST
+    const total = Math.round((subtotal + igv + shippingCost) * 100) / 100
 
     return {
       orderId,
       items,
       shipping: request.shipping,
       subtotal,
+      igv,
       shippingCost,
+      discount: 0,
       total,
       status: 'pending',
       createdAt: new Date().toISOString()
@@ -241,15 +259,18 @@ async function fetchOrderFromApi(id: string): Promise<Order | null> {
 function generateMockOrder(request: CreateOrderRequest): Order {
   const items = request.items
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const shippingCost = 10
-  const total = subtotal + shippingCost
+  const igv = Math.round(subtotal * IGV_RATE * 100) / 100
+  const shippingCost = SHIPPING_COST
+  const total = Math.round((subtotal + igv + shippingCost) * 100) / 100
 
   return {
     orderId: `ORD-${Date.now()}`,
     items,
     shipping: request.shipping,
     subtotal,
+    igv,
     shippingCost,
+    discount: 0,
     total,
     status: 'pending',
     createdAt: new Date().toISOString()
@@ -308,4 +329,48 @@ export async function getUserOrders(): Promise<Order[]> {
   return [...MOCK_ORDERS].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )
+}
+
+const MOCK_DISCOUNT_CODES: Record<string, DiscountCode> = {
+  DESCUENTO10: { code: 'DESCUENTO10', type: 'percentage', value: 10 },
+  ENVIOGRATIS: { code: 'ENVIOGRATIS', type: 'free_shipping', value: 100 },
+  AHORRA20: { code: 'AHORRA20', type: 'percentage', value: 20 }
+}
+
+async function fetchDiscountFromApi(code: string): Promise<DiscountCode | null> {
+  try {
+    const { data, error } = await useApiFetch<DiscountCode>(`/orders/discount/${code}`, {
+      method: 'GET'
+    })
+
+    if (error.value || !data.value) {
+      return null
+    }
+
+    return data.value
+  } catch {
+    return null
+  }
+}
+
+export async function validateDiscountCode(code: string): Promise<DiscountCode> {
+  const trimmed = code.trim().toUpperCase()
+
+  if (!trimmed) {
+    throw new Error('El codigo de descuento no puede estar vacio')
+  }
+
+  const apiResult = await fetchDiscountFromApi(trimmed)
+
+  if (apiResult) {
+    return apiResult
+  }
+
+  const mockResult = MOCK_DISCOUNT_CODES[trimmed]
+
+  if (!mockResult) {
+    throw new Error('Codigo de descuento invalido')
+  }
+
+  return mockResult
 }

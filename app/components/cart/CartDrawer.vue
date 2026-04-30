@@ -5,10 +5,7 @@ import { formatPenAmount } from "~/utils/currency"
 
 const open = defineModel<boolean>("open", { default: false })
 
-const { items, subtotal, totalItems, isEmpty } = useCart()
-const shippingCost = computed(() => 0)
-const taxes = computed(() => 0)
-const orderTotal = computed(() => subtotal.value + shippingCost.value + taxes.value)
+const { items, subtotal, totalItems, isEmpty, shippingCost, igv, total: orderTotal } = useCart()
 
 function openDrawer() {
   open.value = true
@@ -45,18 +42,18 @@ defineExpose({ openDrawer, closeDrawer })
         </ul>
 
         <div class="mt-4 pt-4 border-t border-border">
-          <CartSummary
-            :subtotal="subtotal"
-            :total-items="totalItems"
-            :shipping-cost="shippingCost"
-            :taxes="taxes"
-            :is-empty="isEmpty"
-          />
+      <CartSummary
+        :subtotal="subtotal"
+        :total-items="totalItems"
+        :shipping-cost="shippingCost"
+        :is-empty="isEmpty"
+      />
         </div>
 
         <div class="mt-3">
           <Button as="NuxtLink" to="/checkout" class="w-full h-12 text-base font-semibold">
             Proceder al checkout -- {{ formatPenAmount(orderTotal) }}
+
           </Button>
         </div>
       </div>

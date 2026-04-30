@@ -1,30 +1,43 @@
 <script setup lang="ts">
 import { formatPenAmount } from '~/utils/currency'
 import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
+import { X } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
+import { IGV_RATE } from '~/utils/pricing'
 
 const props = defineProps<{
   subtotal: number
   totalItems: number
   shippingCost: number
-  taxes: number
   isEmpty: boolean
 }>()
 
-const orderTotal = computed(() => props.subtotal + props.shippingCost + props.taxes)
+const {
+  discountCode,
+  appliedDiscount,
+  applyDiscountCode,
+  removeDiscountCode,
+  discountAmount
+} = useCart()
 
-const discountCode = ref('')
-const appliedDiscount = ref<string | null>(null)
+const igv = computed(() => Math.round(props.subtotal * IGV_RATE * 100) / 100)
 
-function applyDiscount() {
+const orderTotal = computed(() => {
+  const raw = props.subtotal + props.shippingCost + igv.value - discountAmount.value
+  return Math.round(raw * 100) / 100
+})
+
+async function handleApplyDiscount() {
   if (!discountCode.value.trim()) {
     toast('Ingresa un codigo de descuento')
     return
   }
-  toast('Codigo ' + discountCode.value + ' aplicado')
-  appliedDiscount.value = discountCode.value.trim()
-  discountCode.value = ''
+  try {
+    await applyDiscountCode()
+    toast('Codigo de descuento aplicado')
+  } catch {
+    toast('Codigo de descuento invalido')
+  }
 }
 </script>
 
@@ -44,13 +57,18 @@ function applyDiscount() {
       </div>
 
       <div class="flex justify-between items-center gap-4">
-        <dt class="text-muted-foreground">Impuestos</dt>
-        <dd class="m-0 font-medium">{{ formatPenAmount(taxes) }}</dd>
+        <dt class="text-muted-foreground">IGV (18%)</dt>
+        <dd class="m-0 font-medium">{{ formatPenAmount(igv) }}</dd>
       </div>
 
       <div v-if="appliedDiscount" class="flex justify-between items-center gap-4 text-green-600">
-        <dt class="font-medium">Descuento</dt>
-        <dd class="m-0 font-medium">-{{ appliedDiscount }}</dd>
+        <dt class="font-medium flex items-center gap-1">
+          Descuento ({{ appliedDiscount.type === 'percentage' ? appliedDiscount.value + '%' : 'envio gratis' }})
+          <button type="button" class="inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-green-100 transition-colors border-none bg-transparent cursor-pointer p-0" @click="removeDiscountCode">
+            <X class="w-3 h-3" />
+          </button>
+        </dt>
+        <dd class="m-0 font-medium">-{{ formatPenAmount(discountAmount) }}</dd>
       </div>
 
       <div class="mt-1 pt-3 border-t border-border">
@@ -62,19 +80,19 @@ function applyDiscount() {
     </dl>
 
     <div class="mt-4 flex gap-2">
-      <Input
+      <input
         v-model="discountCode"
         placeholder="Codigo de descuento"
-        class="h-9 text-sm"
+        class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         :disabled="isEmpty"
-        @keyup.enter="applyDiscount"
-      />
+        @keyup.enter="handleApplyDiscount"
+      >
       <Button
         variant="outline"
         size="sm"
         class="h-9 shrink-0"
         :disabled="isEmpty"
-        @click="applyDiscount"
+        @click="handleApplyDiscount"
       >
         Aplicar
       </Button>

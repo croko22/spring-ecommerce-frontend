@@ -1,4 +1,4 @@
-const PROTECTED_PREFIXES = ['/admin', '/profile', '/orders', '/settings']
+const PROTECTED_PREFIXES = ['/admin', '/profile', '/orders', '/settings', '/checkout']
 
 export default defineNuxtRouteMiddleware(async (to) => {
   const auth = useAuthState()
