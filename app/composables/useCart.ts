@@ -8,7 +8,8 @@ import {
   type CartItem
 } from '~/utils/cart'
 import type { Product } from '~/types/product'
-import type { DiscountCode } from '~/types/order'
+import type { DiscountCode, ShippingMethod, ShippingOption } from '~/types/order'
+import { getShippingOption } from '~/types/order'
 import { SHIPPING_COST, IGV_RATE } from '~/utils/pricing'
 import { validateDiscountCode } from '~/services/orderService'
 
@@ -19,6 +20,7 @@ export function useCart() {
   const hasHydrated = useState<boolean>('cart.hydrated', () => false)
   const discountCode = useState<string>('cart.discountCode', () => '')
   const appliedDiscount = useState<DiscountCode | null>('cart.appliedDiscount', () => null)
+  const shippingMethod = useState<ShippingMethod>('cart.shippingMethod', () => 'standard' as ShippingMethod)
 
   const subtotal = computed(() => getCartSubtotal(items.value))
   const totalItems = computed(() => getCartTotalItems(items.value))
@@ -26,11 +28,13 @@ export function useCart() {
 
   const igv = computed(() => Math.round(subtotal.value * IGV_RATE * 100) / 100)
 
+  const selectedShippingOption = computed(() => getShippingOption(shippingMethod.value))
+
   const shippingCost = computed(() => {
     if (appliedDiscount.value?.type === 'free_shipping') {
       return 0
     }
-    return SHIPPING_COST
+    return selectedShippingOption.value.cost
   })
 
   const discountAmount = computed(() => {
@@ -154,6 +158,8 @@ export function useCart() {
     isEmpty,
     igv,
     shippingCost,
+    shippingMethod,
+    selectedShippingOption,
     discountAmount,
     total,
     discountCode,

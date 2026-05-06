@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { ShippingAddress } from '~/types/order'
+import type { ShippingAddress, ShippingMethod, ShippingOption } from '~/types/order'
+import { SHIPPING_OPTIONS } from '~/types/order'
 import { cn } from '~/lib/utils'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -16,13 +17,16 @@ const emit = defineEmits<{
 
 const { user } = useAuthState()
 
-const formData = reactive<ShippingAddress>({
+const shippingOptions: ShippingOption[] = SHIPPING_OPTIONS
+
+const formData = reactive<ShippingAddress & { shippingMethod: ShippingMethod }>({
   fullName: props.modelValue.fullName || user.value?.name || '',
   documentType: props.modelValue.documentType || 'dni',
   documentNumber: props.modelValue.documentNumber || '',
   address: props.modelValue.address || '',
   phone: props.modelValue.phone || '',
-  region: props.modelValue.region || ''
+  region: props.modelValue.region || '',
+  shippingMethod: 'standard'
 })
 
 const errors = reactive({
@@ -41,9 +45,10 @@ const regions = [
   'Puno', 'San Martin', 'Tacna', 'Tumbes', 'Ucayali'
 ]
 
-watch(formData, (val) => {
-  emit('update:modelValue', { ...val })
-}, { deep: true })
+// Emit shipping method change separately
+watch(() => formData.shippingMethod, (method) => {
+  // Could emit to parent if needed
+})
 
 function validate(): boolean {
   let isValid = true
@@ -54,7 +59,10 @@ function validate(): boolean {
   errors.phone = ''
   errors.region = ''
 
-  if (!formData.fullName.trim()) {
+  // For pickup, don't require address fields
+  if (formData.shippingMethod === 'pickup') {
+    // Skip address validation for pickup
+  } else if (!formData.fullName.trim()) {
     errors.fullName = 'El nombre es requerido'
     isValid = false
   }
@@ -70,7 +78,7 @@ function validate(): boolean {
     isValid = false
   }
 
-  if (!formData.address.trim()) {
+  if (!formData.address.trim() && formData.shippingMethod !== 'pickup') {
     errors.address = 'La direccion es requerida'
     isValid = false
   }
@@ -83,7 +91,7 @@ function validate(): boolean {
     isValid = false
   }
 
-  if (!formData.region.trim()) {
+  if (!formData.region.trim() && formData.shippingMethod !== 'pickup') {
     errors.region = 'La region es requerida'
     isValid = false
   }
@@ -93,6 +101,7 @@ function validate(): boolean {
 
 function handleSubmit() {
   if (!validate()) return
+  // Emit the shipping method via a custom event
   emit('update:modelValue', { ...formData })
   emit('submit')
 }
@@ -102,6 +111,35 @@ defineExpose({ validate })
 
 <template>
   <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
+    <!-- Shipping Method Selection -->
+    <div class="flex flex-col gap-1.5">
+      <label class="text-sm font-semibold">Metodo de envio</label>
+      <div class="flex flex-col gap-2">
+        <label
+          v-for="option in shippingOptions"
+          :key="option.id"
+          class="flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors"
+          :class="formData.shippingMethod === option.id ? 'border-primary bg-primary/5' : 'border-border hover:bg-secondary/50'"
+        >
+          <div class="flex items-center gap-3">
+            <input
+              type="radio"
+              :value="option.id"
+              v-model="formData.shippingMethod"
+              class="w-4 h-4 text-primary"
+            >
+            <div>
+              <p class="text-sm font-medium">{{ option.name }}</p>
+              <p class="text-xs text-muted-foreground">{{ option.description }}</p>
+            </div>
+          </div>
+          <span class="text-sm font-semibold" :class="option.cost === 0 ? 'text-green-600' : ''">
+            {{ option.cost === 0 ? 'Gratis' : `S/ ${option.cost.toFixed(2)}` }}
+          </span>
+        </label>
+      </div>
+    </div>
+
     <div class="flex flex-col gap-1.5">
       <label for="fullName" class="text-sm font-semibold">Nombre completo</label>
       <Input
