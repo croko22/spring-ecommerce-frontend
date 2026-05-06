@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { formatPenAmount } from '~/utils/currency'
-import { SHIPPING_COST, IGV_RATE, calculateIgv, calculateShippingCost, calculateDiscountAmount } from '~/utils/pricing'
+import { IGV_RATE, calculateIgv } from '~/utils/pricing'
+import { getShippingOption, type ShippingMethod, type ShippingOption } from '~/types/order'
 import type { ShippingAddress, CreditCardPayment } from '~/types/order'
 import type { CartItem } from '~/utils/cart'
 import CheckoutStepper from '~/components/checkout/CheckoutStepper.vue'
@@ -28,6 +29,18 @@ const {
   submitOrder,
   reset
 } = useCheckout()
+
+// Shipping method selection
+const selectedShippingMethod = useState<ShippingMethod>('checkout.shippingMethod', () => 'standard')
+const shippingOptions: ShippingOption[] = [
+  { id: 'standard', name: 'Envío estándar', description: 'Entrega en 3-5 días hábiles', cost: 10, eta: '3-5 días' },
+  { id: 'express', name: 'Envío exprés', description: 'Entrega en 24 horas', cost: 25, eta: '24 horas' },
+  { id: 'pickup', name: 'Recojo en tienda', description: 'Recoge en nuestro local', cost: 0, eta: 'Hoy' }
+]
+
+const selectedShippingOption = computed(() => 
+  shippingOptions.find(o => o.id === selectedShippingMethod.value) ?? shippingOptions[0]
+)
 
 const shippingData = ref<ShippingAddress>({
   fullName: shipping.value?.fullName || '',
@@ -104,7 +117,7 @@ const subtotal = computed(() => {
 })
 
 const igv = computed(() => calculateIgv(subtotal.value))
-const shippingCost = computed(() => SHIPPING_COST)
+const shippingCost = computed(() => selectedShippingOption.value?.cost ?? 10)
 const discountAmount = computed(() => 0)
 const total = computed(() => {
   return Math.round((subtotal.value + igv.value + shippingCost.value - discountAmount.value) * 100) / 100
